@@ -70,7 +70,6 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Trace hit actor: %s"), *Hit.GetActor()->GetName());
 		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 5.f, 0, 10.0f);
-
 	}
 	else {
 		UE_LOG(LogTemp, Log, TEXT("No Actors were hit"));

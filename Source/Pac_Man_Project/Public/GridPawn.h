@@ -11,11 +11,11 @@ class PAC_MAN_PROJECT_API AGridPawn : public APawn
 {
 	GENERATED_BODY()
 
-	// The orthogonal direction the pawn will try to pursue: it will continue until an obstacle is found
+	// The orthogonal direction the pawn will walk: it will continue until an obstacle/blocking collision is found
 	FVector CurrentDirection = FVector::ZeroVector;
 	FVector LastInputGridPosition;
 
-	// Assuming that the gridsize is 100 this is the velocity
+	// The velocity of the actor (as unit per second)
 	UPROPERTY(EditDefaultsOnly)
 	float GridVelocity = 700.0f;
 
