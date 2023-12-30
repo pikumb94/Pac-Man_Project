@@ -14,10 +14,16 @@ APickableActor::APickableActor()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	//The Collider for this actor will be a simplified box collision rounding the mesh
 	MeshComponent->SetCollisionProfileName(TEXT("OverlapAll"));
-	//MeshComponent->OnComponentHit.AddDynamic(this, &AGridPawn::OnComponentHit);
+	MeshComponent->OnComponentBeginOverlap.AddDynamic(this, &APickableActor::OnBeginOverlap);
 
 	SetRootComponent(MeshComponent);
 
+}
+
+void APickableActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	OnPickedAction(Other);
+	Destroy();
 }
 
 // Called when the game starts or when spawned
