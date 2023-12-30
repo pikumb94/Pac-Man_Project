@@ -2,8 +2,14 @@
 
 
 #include "PickableScore.h"
+#include "PacManGameInstance.h"
 
 void APickableScore::OnPickedAction(AActor* Other)
 {
+	TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>();
 
+	if(GI)
+	{
+		GI->AddScore(scoreBaseValue);
+	}
 }
