@@ -35,11 +35,13 @@ void AWarpActor::Tick(float DeltaTime)
 
 }
 void AWarpActor::OnWarpEnter(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-//void AWarpActor::OnWarpEnter(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	if (OtherActor && WarpActorDestination)
 	{
-		OtherActor->SetActorLocation(WarpActorDestination->GetActorLocation()+ WarpActorDestination->GetActorForwardVector() * GridConstants::GridSize);
+		GetWorldTimerManager().SetTimerForNextTick([OtherActor, this]() { 
+			OtherActor->SetActorLocation(WarpActorDestination->GetActorLocation() + WarpActorDestination->GetActorForwardVector() * GridConstants::GridSize);
+
+		});
 
 	}
 }
