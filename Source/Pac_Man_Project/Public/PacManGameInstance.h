@@ -7,7 +7,9 @@
 #include "PacManGameInstance.generated.h"
 
 // Event for Score increment
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreChanged, int, NewScore);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreChanged, int, ScoreToAdd);
+// Event for Lives increment
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLivesChanged, int, NewLives);
 
 /**
  * 
@@ -18,9 +20,11 @@ class PAC_MAN_PROJECT_API UPacManGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 	int64 score = 0;
+	int lives = 2;
 
 public:
-	UFUNCTION(BlueprintCallable, Category = "Score")
+
+	UFUNCTION(BlueprintCallable)
 	void AddScore(int scoreToAdd);
 
 	UFUNCTION(BlueprintCallable, Category = "Score")
@@ -29,6 +33,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Score")
 	void ResetScore() { score = 0; };
 
+	UFUNCTION(BlueprintCallable, Category = "Lives")
+	void SetLives(int NewLives) { lives = NewLives; };
+	UFUNCTION(BlueprintCallable, Category = "Lives")
+	int GetLives() { return lives; };
+
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnScoreChanged OnScoreChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnLivesChanged OnLivesChanged;
 };

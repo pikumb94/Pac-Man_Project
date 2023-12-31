@@ -17,7 +17,6 @@ class PAC_MAN_PROJECT_API APickableScore : public APickableActor
 	//Score value of the pickable
 	UPROPERTY(EditDefaultsOnly)
 	int scoreBaseValue = 10;
-
 protected:
 
 	virtual void OnPickedAction(AActor* Other) override;
