@@ -14,12 +14,11 @@ AGridPawn::AGridPawn()
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	MeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
-	MeshComponent->OnComponentHit.AddDynamic(this, &AGridPawn::OnComponentHit);
 
 
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
 	MovementComponent->MaxSpeed = GridVelocity;
-	//MovementComponent->Acceleration = 0.f;
+
 	SetRootComponent(MeshComponent);
 
 }
@@ -97,19 +96,6 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 			*/
 		}
 
-		if (NewDirection == FVector::LeftVector) {
-			SetActorRotation(FRotator(0, 270, 0));
-		}
-		else if (NewDirection == FVector::RightVector) {
-			SetActorRotation(FRotator(0, 90, 0));
-		}
-		else if (NewDirection == FVector::ForwardVector) {
-			SetActorRotation(FRotator(0, 0, 0));
-		}
-		else if (NewDirection == FVector::BackwardVector) {
-			SetActorRotation(FRotator(0, 180, 180));
-		}
-
 		LastInputGridPosition = VectorGridSnap(GetActorLocation());
 		//Update the new current Direction
 
@@ -119,10 +105,4 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 
 
 
-}
-
-void AGridPawn::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	//USALO DOPO PER CAPIRE QUANDO SBATTE SUL MURO
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s ha sbattuto su %s"), *HitComponent->GetName(), *OtherActor->GetName()));
 }

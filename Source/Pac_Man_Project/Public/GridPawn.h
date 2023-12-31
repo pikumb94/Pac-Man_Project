@@ -19,9 +19,6 @@ class PAC_MAN_PROJECT_API AGridPawn : public APawn
 	UPROPERTY(EditDefaultsOnly)
 	float GridVelocity = 700.0f;
 
-	// Mesh component
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
 	// Movement component
 	UPROPERTY(EditDefaultsOnly)
@@ -35,6 +32,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// Mesh component
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -45,7 +46,4 @@ public:
 
 	void SetDirection(const FVector NewDirection);
 
-private:
-	UFUNCTION()
-	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 };
