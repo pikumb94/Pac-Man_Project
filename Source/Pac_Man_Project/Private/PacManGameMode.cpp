@@ -43,8 +43,37 @@ void APacManGameMode::CheckLevelCompleted(int ScoreToAdd)
 
 	if (remainingScorePellets <= 0)
 	{
-		UE_LOG(LogTemp, Log, TEXT("PROSSIMO LIVELLO"));
-		UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+		ReloadLevel();
+	}
+}
+
+void APacManGameMode::ReloadLevel(bool bReduceLife)
+{
+	TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>();
+
+	if (GI)
+	{
+		if (bReduceLife)
+		{
+			//player collided with the enemy, reduce by 1 the lives and reload the same level
+			int remainingLives = GI->GetLives() -1;
+
+			if (remainingLives <= 0)
+			{
+				GI->OnGameOver.Broadcast();
+			}
+			else
+			{
+				GI->SetLives(remainingLives - 1);
+				UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+			}
+			
+		}
+		else {
+			GI->IncrementLevel();
+			UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
+		}
 
 	}
+
 }

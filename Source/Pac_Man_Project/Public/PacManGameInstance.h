@@ -10,6 +10,8 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreChanged, int, ScoreToAdd);
 // Event for Lives increment
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLivesChanged, int, NewLives);
+// Event for Game Over (player lives equal to zero)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameOver);
 
 /**
  * 
@@ -21,26 +23,32 @@ class PAC_MAN_PROJECT_API UPacManGameInstance : public UGameInstance
 
 	int64 score = 0;
 	int lives = 2;
-
+	int level = 1;
 public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddScore(int scoreToAdd);
-
-	UFUNCTION(BlueprintCallable, Category = "Score")
+	UFUNCTION(BlueprintCallable)
 	int64 GetScore() { return score; };
-
-	UFUNCTION(BlueprintCallable, Category = "Score")
+	UFUNCTION(BlueprintCallable)
 	void ResetScore() { score = 0; };
 
-	UFUNCTION(BlueprintCallable, Category = "Lives")
+	UFUNCTION(BlueprintCallable)
 	void SetLives(int NewLives) { lives = NewLives; };
-	UFUNCTION(BlueprintCallable, Category = "Lives")
+	UFUNCTION(BlueprintCallable)
 	int GetLives() { return lives; };
+
+	UFUNCTION(BlueprintCallable)
+	void IncrementLevel() { level++; };
+	UFUNCTION(BlueprintCallable)
+	int GetLevel() { return level; };
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnScoreChanged OnScoreChanged;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnLivesChanged OnLivesChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Events")
+	FOnGameOver OnGameOver;
 };

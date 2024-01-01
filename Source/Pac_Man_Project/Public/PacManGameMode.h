@@ -22,4 +22,7 @@ public:
 
 	UFUNCTION()
 	void CheckLevelCompleted(int ScoreToAdd);
+
+	void ReloadLevel(bool bReduceLife=false);
+ 
 };
