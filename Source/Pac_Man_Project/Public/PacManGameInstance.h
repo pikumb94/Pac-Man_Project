@@ -30,8 +30,6 @@ public:
 	void AddScore(int scoreToAdd);
 	UFUNCTION(BlueprintCallable)
 	int64 GetScore() { return score; };
-	UFUNCTION(BlueprintCallable)
-	void ResetScore() { score = 0; };
 
 	UFUNCTION(BlueprintCallable)
 	void SetLives(int NewLives) { lives = NewLives; };
@@ -42,6 +40,9 @@ public:
 	void IncrementLevel() { level++; };
 	UFUNCTION(BlueprintCallable)
 	int GetLevel() { return level; };
+
+	UFUNCTION(BlueprintCallable)
+	void ResetGameInstance() { score = 0; lives = 2; level = 1; };
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnScoreChanged OnScoreChanged;
