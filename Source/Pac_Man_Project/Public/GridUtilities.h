@@ -5,6 +5,15 @@
 namespace GridConstants
 {
 	const float GridSize = 100.f;
+
+	// The reference system is Y-down
+	const TArray<FVector, TFixedAllocator<4>> GridVersorsArray{
+		-FVector::RightVector,		//Up, North
+		-FVector::ForwardVector,	//Left, West
+		FVector::RightVector,		//Down, South
+		FVector::ForwardVector,		//Right, East
+	};
+
 }
 
 // Snaps a generic vector in a volumetric grid of CustomGridSize. If the CustomGridSize is not specified or is invalid
@@ -26,3 +35,21 @@ inline FVector VectorGridSnap(const FVector& Point, float CustomGridSize = 0.f)
 	return SnappedVector;
 	
 }
+/*
+//returns the index of a given direction in the GridVersorArray
+inline int directionArrayIndex(FVector dir) {
+
+	if (dir == -FVector::RightVector)
+		return 0;
+
+	if (dir == -FVector::ForwardVector)
+		return 1;
+
+	if (dir == FVector::RightVector)
+		return 2;
+
+	if (dir == FVector::ForwardVector)
+		return 3;
+
+	return -1;
+}*/

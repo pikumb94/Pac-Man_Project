@@ -82,27 +82,22 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 				return;
 			}
 			SetActorLocation(VectorGridSnap(GetActorLocation()));
-			/*
-			auto CurrPawnLocation = GetActorLocation();
 
-
-			if (FVector::DotProduct(NewDirection, FVector::ForwardVector) == 0)
-				//if it is moving along the Y axis, snap on the X
-				SetActorLocation(FVector(FMath::GridSnap(CurrPawnLocation.X, GridConstants::GridSize), CurrPawnLocation.Y, CurrPawnLocation.Z));
-
-			else
-				//if it is moving along the X axis, snap on the Y
-				SetActorLocation(FVector(CurrPawnLocation.X, FMath::GridSnap(CurrPawnLocation.Y, GridConstants::GridSize), CurrPawnLocation.Z));
-			*/
 		}
 
 		LastInputGridPosition = VectorGridSnap(GetActorLocation());
+
 		//Update the new current Direction
-
 		CurrentDirection = NewDirection;
-
 	}
 
 
+
+}
+
+void AGridPawn::ForceDirection(const FVector NewDirection)
+{
+
+	CurrentDirection = NewDirection;
 
 }

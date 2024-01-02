@@ -28,6 +28,9 @@ public:
 	// Sets default values for this pawn's properties
 	AGridPawn();
 
+	// Getter for the current moving direction of the pawn
+	FVector GetMovingDirection() const { return CurrentDirection; };
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -43,7 +46,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
+	//The Pawn tries to pursue the given direction instantly
 	void SetDirection(const FVector NewDirection);
 
+	void ForceDirection(const FVector NewDirection);
 };
