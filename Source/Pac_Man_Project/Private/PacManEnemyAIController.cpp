@@ -12,11 +12,16 @@
 void APacManEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void APacManEnemyAIController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
 
 	ChangeEnemyState(EEnemyState::Scatter);
 
-	ControlledGridPawn = Cast<AGridPawn>(GetPawn());
-	
+	ControlledGridPawn = Cast<AGridPawn>(InPawn);
+
 	CurrentCell = VectorGridSnap(ControlledGridPawn->GetActorLocation());
 	FVector NextDirection = DecideNextDirection();
 	ControlledGridPawn->ForceDirection(NextDirection);
@@ -51,7 +56,7 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 			TargetCell = FVector::ZeroVector;
 			break;
 	}
-
+	State = NewState;
 }
 
 FVector APacManEnemyAIController::DecideNextDirection()
@@ -67,7 +72,7 @@ FVector APacManEnemyAIController::DecideNextDirection()
 		FHitResult Hit;
 
 		FVector TraceEnd = CurrentCell + versor * GridConstants::GridSize;
-		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_WorldStatic, QueryParams);
+		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_WorldDynamic, QueryParams);
 		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Magenta);
 
 		HitVector.Add(Hit.bBlockingHit);
@@ -98,7 +103,7 @@ FVector APacManEnemyAIController::DecideNextDirection()
 	}
 
 
-	return GridConstants::GridVersorsArray[minIdx];
+	return (minIdx>-1? GridConstants::GridVersorsArray[minIdx] : FVector::ZeroVector);
 }
 
 void APacManEnemyAIController::Tick(float DeltaTime)

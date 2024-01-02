@@ -17,7 +17,17 @@ class PAC_MAN_PROJECT_API APacManGameMode : public AGameModeBase
 	APacManGameMode();
 
 	int remainingScorePellets;
+
+	void SpawnEnemies();
+
+
+
 public:
+
+	// Enemy Pawn Class to spawn
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class AEnemyGridPawn> EnemyPawnClass;
+
 	virtual void StartPlay() override;
 
 	UFUNCTION()

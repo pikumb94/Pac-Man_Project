@@ -8,13 +8,14 @@
 #include "PickableActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "PacManGameInstance.h"
+#include "PacManEnemyAIController.h"
+#include "EnemyGridPawn.h"
 
 APacManGameMode::APacManGameMode()
 {
 	/* Assign the class types used by this gamemode */
 	PlayerControllerClass = APacManController::StaticClass();
 	DefaultPawnClass = AGridPawn::StaticClass();
-
 
 }
 
@@ -33,6 +34,26 @@ void APacManGameMode::StartPlay()
 	if (GI)
 	{
 		GI->OnScoreChanged.AddDynamic(this, &APacManGameMode::CheckLevelCompleted);
+	}
+
+	SpawnEnemies();
+}
+
+void APacManGameMode::SpawnEnemies()
+{
+	FActorSpawnParameters ActorSpawnParams;
+	ActorSpawnParams.bNoFail = true;
+	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	
+	for (auto enemyType : TEnumRange<EEnemyType>())
+	{
+		TObjectPtr<APacManEnemyAIController> EnemyController = GetWorld()->SpawnActor<APacManEnemyAIController>();
+		EnemyController->SetEnemyType(enemyType);
+
+		TObjectPtr<AEnemyGridPawn> EnemyPawn = GetWorld()->SpawnActor<AEnemyGridPawn>(EnemyPawnClass, FVector::ZeroVector, FRotator::ZeroRotator);
+
+		EnemyController->Possess(EnemyPawn);
+
 	}
 
 }

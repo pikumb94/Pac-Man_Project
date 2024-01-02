@@ -24,7 +24,7 @@ AEnemyGridPawn::AEnemyGridPawn()
 void AEnemyGridPawn::BeginPlay()
 {
 	Super::BeginPlay();
-
+	ForceDirection(-FVector::RightVector);
 }
 
 
@@ -47,7 +47,7 @@ void AEnemyGridPawn::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AA
 void AEnemyGridPawn::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	//USALO DOPO PER CAPIRE QUANDO SBATTE SUL MURO
-	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s ha sbattuto su %s"), *HitComponent->GetName(), *OtherActor->GetName()));
+	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s ha sbattuto su %s"), *HitComponent->GetName(), *OtherActor->GetName()));
 	SetActorLocation(VectorGridSnap(GetActorLocation()));
 
 }

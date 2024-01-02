@@ -26,6 +26,7 @@ enum class EEnemyType : uint8 {
 	Inky,			//Bashful - Cyan
 	Clyde			//Pokey - Orange
 };
+ENUM_RANGE_BY_FIRST_AND_LAST(EEnemyType, EEnemyType::Blinky, EEnemyType::Clyde);
 
 UCLASS(BlueprintType, Blueprintable)
 class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
@@ -33,16 +34,13 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 	GENERATED_BODY()
 	
 	// The current grid cell the enemy is
-	UPROPERTY(EditDefaultsOnly)
 	FVector CurrentCell = FVector::ZeroVector;
 
 	// The cell of the grid the enemy will try to reach
-	UPROPERTY(EditDefaultsOnly)
 	FVector TargetCell = FVector::ZeroVector;
 
-	UPROPERTY(EditDefaultsOnly)
 	EEnemyState State = EEnemyState::Idle;
-	UPROPERTY(EditDefaultsOnly, Category = "Enemy Type")
+
 	EEnemyType EnemyType = EEnemyType::Blinky;
 
 	TObjectPtr<class AGridPawn> ControlledGridPawn;
@@ -55,10 +53,12 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void OnPossess(APawn* InPawn) override;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void ChangeEnemyState(EEnemyState NewState);
-
+	void SetEnemyType(EEnemyType NewType) { EnemyType = NewType; };
 };

@@ -8,10 +8,12 @@ namespace GridConstants
 
 	// The reference system is Y-down
 	const TArray<FVector, TFixedAllocator<4>> GridVersorsArray{
-		-FVector::RightVector,		//Up, North
-		-FVector::ForwardVector,	//Left, West
-		FVector::RightVector,		//Down, South
+		
 		FVector::ForwardVector,		//Right, East
+		FVector::RightVector,		//Down, South
+		-FVector::ForwardVector,	//Left, West
+		-FVector::RightVector,		//Up, North
+
 	};
 
 }
