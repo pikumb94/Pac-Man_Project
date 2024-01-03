@@ -6,11 +6,12 @@
 
 void APickableEnergizer::OnPickedAction(AActor* Other)
 {
-	//TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>();
 	TObjectPtr<APacManGameMode> GM = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode());
 
 	if (GM)
 	{
 		GM->TriggerFrightened();
+		GM->AddScoreFwd(energizerBaseValue);
+
 	}
 }

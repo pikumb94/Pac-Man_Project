@@ -16,7 +16,7 @@ class PAC_MAN_PROJECT_API APickableScore : public APickableActor
 {
 	GENERATED_BODY()
 
-	//Score value of the pickable
+	//Score value of the score pickable
 	UPROPERTY(EditDefaultsOnly)
 	int scoreBaseValue = 10;
 

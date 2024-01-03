@@ -95,8 +95,8 @@ void APacManEnemyAIController::PawnOverlappedPlayerHandler()
 
 		if (State == EEnemyState::Frightened) {
 
-			GetWorldTimerManager().SetTimerForNextTick([this]() {
-				ControlledGridPawn->SetActorLocation(FVector::ZeroVector);
+			GetWorldTimerManager().SetTimerForNextTick([GM,this]() {
+				ControlledGridPawn->SetActorLocation(GM->GetEnemiesData()->GetEnemyInitialCell(EnemyType));
 
 			});
 

@@ -7,7 +7,7 @@
 #include "PacManGameInstance.generated.h"
 
 // Event for Score increment
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreChanged, int, ScoreToAdd);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreChanged, int, NewScore);
 // Event for Lives increment
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLivesChanged, int, NewLives);
 // Event for Game Over (player lives equal to zero)
@@ -25,6 +25,10 @@ class PAC_MAN_PROJECT_API UPacManGameInstance : public UGameInstance
 	int64 score = 0;
 	int lives = 2;
 	int level = 1;
+
+	//Every bonusLifeThreshold scores, the player will get one extra life
+	UPROPERTY(EditDefaultsOnly)
+	int bonusLifeThreshold = 10000;
 
 public:
 

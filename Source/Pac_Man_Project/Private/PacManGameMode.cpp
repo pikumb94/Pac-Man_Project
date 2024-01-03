@@ -33,14 +33,6 @@ void APacManGameMode::StartPlay()
 
 	remainingScorePellets = AllPickableScores.Num();
 
-
-	TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>();
-
-	if (GI)
-	{
-		GI->OnScoreChanged.AddDynamic(this, &APacManGameMode::CheckLevelCompleted);
-	}
-
 	SpawnEnemies();
 }
 
@@ -65,7 +57,7 @@ void APacManGameMode::SpawnEnemies()
 
 }
 
-void APacManGameMode::CheckLevelCompleted(int ScoreToAdd)
+void APacManGameMode::UpdateNCheckLevelCompleted()
 {
 	remainingScorePellets--;
 
@@ -92,7 +84,7 @@ void APacManGameMode::ReloadLevel(bool bReduceLife)
 			}
 			else
 			{
-				GI->SetLives(remainingLives - 1);
+				GI->SetLives(remainingLives);
 				UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
 			}
 			
@@ -119,7 +111,17 @@ void APacManGameMode::TriggerFrightened()
 	GetWorldTimerManager().SetTimer(FrightenedTimerHandle, [this]() {
 
 		OnFrightenedChanged.Broadcast(false);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("FRIGHT FINITA!")));
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("FRIGHT FINITA!")));
 
 	}, FrightenedModeDuration, false);
+}
+
+void APacManGameMode::AddScoreFwd(int valueToAdd)
+{
+	TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>();
+	
+	if (GI)
+		GI->AddScore(valueToAdd);
+
+	UpdateNCheckLevelCompleted();
 }

@@ -40,8 +40,7 @@ public:
 
 	virtual void StartPlay() override;
 
-	UFUNCTION()
-	void CheckLevelCompleted(int ScoreToAdd);
+	void UpdateNCheckLevelCompleted();
 
 	//If we reload a level because of a player completion or because of life loss
 	void ReloadLevel(bool bReduceLife=false);
@@ -52,4 +51,5 @@ public:
 	TObjectPtr<UEnemyDataAsset> GetEnemiesData() const{ return EnemiesData; };
 
 	void TriggerFrightened();
+	void AddScoreFwd(int valueToAdd);
 };

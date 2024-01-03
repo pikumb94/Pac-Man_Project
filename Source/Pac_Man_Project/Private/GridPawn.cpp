@@ -14,7 +14,8 @@ AGridPawn::AGridPawn()
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	MeshComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
-
+	MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
 	MovementComponent->MaxSpeed = GridVelocity;
