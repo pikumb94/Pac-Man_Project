@@ -2,4 +2,15 @@
 
 
 #include "PickableEnergizer.h"
+#include "PacManGameMode.h"
 
+void APickableEnergizer::OnPickedAction(AActor* Other)
+{
+	//TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>();
+	TObjectPtr<APacManGameMode> GM = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode());
+
+	if (GM)
+	{
+		GM->TriggerFrightened();
+	}
+}

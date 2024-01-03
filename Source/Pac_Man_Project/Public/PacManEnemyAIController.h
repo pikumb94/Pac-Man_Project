@@ -38,7 +38,7 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 
 	EEnemyType EnemyType;
 
-	TObjectPtr<class AGridPawn> ControlledGridPawn;
+	TObjectPtr<class AEnemyGridPawn> ControlledGridPawn;
 
 	FVector DecideNextDirection();
 
@@ -51,9 +51,16 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
 public:
+	APacManEnemyAIController();
+
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void ChangeEnemyState(EEnemyState NewState);
 	void SetEnemyType(EEnemyType NewType) { EnemyType = NewType; };
+
+	void PawnOverlappedPlayerHandler();
+
+	UFUNCTION()
+	void OnFrightenedHandler(bool NewFrightenedValue);
 };

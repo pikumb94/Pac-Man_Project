@@ -7,11 +7,14 @@
 #include "PickableEnergizer.generated.h"
 
 /**
- * 
+ * The energizer will trigger the event to change all the enemies in the ghost mode
  */
 UCLASS()
 class PAC_MAN_PROJECT_API APickableEnergizer : public APickableActor
 {
 	GENERATED_BODY()
-	
+
+protected:
+	//Overriden picked action
+	virtual void OnPickedAction(AActor* Other) override;
 };

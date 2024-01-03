@@ -4,7 +4,7 @@
 #include "EnemyGridPawn.h"
 
 #include "Kismet/GameplayStatics.h"
-#include "PacManGameMode.h"
+#include "PacManEnemyAIController.h"
 #include "GridUtilities.h"
 
 AEnemyGridPawn::AEnemyGridPawn()
@@ -18,8 +18,13 @@ AEnemyGridPawn::AEnemyGridPawn()
 
 	//CON IL GIUSTO COLLIDER NON SERVE
 	//MeshComponent->OnComponentHit.AddDynamic(this, &AEnemyGridPawn::OnComponentHit);
+	/*
+	TObjectPtr<APacManGameMode> GM = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode());
 
-
+	if (GM) {
+		GM->OnFrightenedChanged.AddDynamic(this, &AEnemyGridPawn::OnFrightenedChanged);
+	}
+	*/
 }
 
 
@@ -49,11 +54,11 @@ void AEnemyGridPawn::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 	if(UGameplayStatics::GetPlayerPawn(GetWorld(),0) == OtherActor)
 	{
-		TObjectPtr<APacManGameMode> GM = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode());
-
-		if (GM) {
-			GM->ReloadLevel(true);
-		}
+		//Player overlapped with Enemy
+		TObjectPtr<APacManEnemyAIController> AIEnemyController = Cast<APacManEnemyAIController>(GetController());
+		
+		if (AIEnemyController)
+			AIEnemyController->PawnOverlappedPlayerHandler();
 	}
 }
 

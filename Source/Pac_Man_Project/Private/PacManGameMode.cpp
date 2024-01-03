@@ -105,3 +105,21 @@ void APacManGameMode::ReloadLevel(bool bReduceLife)
 	}
 
 }
+
+void APacManGameMode::TriggerFrightened()
+{
+	if (GetWorldTimerManager().IsTimerActive(FrightenedTimerHandle))
+	{
+		GetWorldTimerManager().ClearTimer(FrightenedTimerHandle);
+	}
+
+
+	OnFrightenedChanged.Broadcast(true);
+
+	GetWorldTimerManager().SetTimer(FrightenedTimerHandle, [this]() {
+
+		OnFrightenedChanged.Broadcast(false);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("FRIGHT FINITA!")));
+
+	}, FrightenedModeDuration, false);
+}

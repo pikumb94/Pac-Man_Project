@@ -4,23 +4,37 @@
 #include "PacManEnemyAIController.h"
 
 #include "GridUtilities.h"
-#include "GridPawn.h"
 #include "PacManGameMode.h"
+#include "EnemyGridPawn.h"
+#include "PacManGameInstance.h"
 
 #pragma optimize("", off)
+
+APacManEnemyAIController::APacManEnemyAIController()
+{
+
+}
+
 
 void APacManEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	TObjectPtr<APacManGameMode> GM = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode());
+
+	if (GM) {
+		GM->OnFrightenedChanged.AddDynamic(this, &APacManEnemyAIController::OnFrightenedHandler);
+	}
+
 }
 
 void APacManEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	ChangeEnemyState(EEnemyState::Scatter);
+	ControlledGridPawn = Cast<AEnemyGridPawn>(InPawn);
 
-	ControlledGridPawn = Cast<AGridPawn>(InPawn);
+	ChangeEnemyState(EEnemyState::Scatter);
 
 	CurrentCell = VectorGridSnap(ControlledGridPawn->GetActorLocation());
 	FVector NextDirection = DecideNextDirection();
@@ -33,28 +47,72 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 {
 	
 	auto EnemyData = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode())->GetEnemiesData();
-
-
 	
+
 	switch (NewState)
 	{
 		case EEnemyState::Scatter:
 			TargetCell = EnemyData->GetEnemyScatterCell(EnemyType);
+			ControlledGridPawn->FrightenedBlinkMaterial(false);
+
 			break;
 
 		case EEnemyState::Chase:
+			ControlledGridPawn->FrightenedBlinkMaterial(false);
+
 			break;
 
 		case EEnemyState::Frightened:
+			ControlledGridPawn->FrightenedBlinkMaterial(true);
+
 			break;
 
 		default:
 			//In any other case return to the ghosthouse
+			ControlledGridPawn->FrightenedBlinkMaterial(false);
 			TargetCell = FVector::ZeroVector;
 			break;
 	}
 
 	State = NewState;
+}
+
+void APacManEnemyAIController::OnFrightenedHandler(bool NewFrightenedValue)
+{
+	if (NewFrightenedValue) {
+		ChangeEnemyState(EEnemyState::Frightened);
+	}
+	else
+		ChangeEnemyState(EEnemyState::Scatter); //	TODO we should set back the state before frightened mode
+
+}
+
+void APacManEnemyAIController::PawnOverlappedPlayerHandler()
+{
+	TObjectPtr<APacManGameMode> GM = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode());
+
+	if (GM) {
+
+		if (State == EEnemyState::Frightened) {
+
+			GetWorldTimerManager().SetTimerForNextTick([this]() {
+				ControlledGridPawn->SetActorLocation(FVector::ZeroVector);
+
+			});
+
+			//TODO: GIVE INCREASING SCORE TO PLAYER=> for now a fixed amount
+			TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>();
+			if (GI)
+			{
+				GI->AddScore(1000);
+			}
+			//
+		}
+		else {
+			GM->ReloadLevel(true);
+
+		}
+	}
 }
 
 FVector APacManEnemyAIController::DecideNextDirection()
