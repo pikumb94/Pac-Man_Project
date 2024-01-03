@@ -9,16 +9,19 @@
 
 AEnemyGridPawn::AEnemyGridPawn()
 {
-	//MeshComponent->OnComponentHit.AddDynamic(this, &AEnemyGridPawn::OnComponentHit);
 	MeshComponent->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Ignore);
 	MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
 
 	MeshComponent->SetCollisionProfileName(TEXT("BlockAll"));
 	MeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyGridPawn::OnEnemyOverlap);
-	MeshComponent->OnComponentHit.AddDynamic(this, &AEnemyGridPawn::OnComponentHit);
+
+	//CON IL GIUSTO COLLIDER NON SERVE
+	//MeshComponent->OnComponentHit.AddDynamic(this, &AEnemyGridPawn::OnComponentHit);
+
 
 }
+
 
 
 void AEnemyGridPawn::BeginPlay()
@@ -26,6 +29,19 @@ void AEnemyGridPawn::BeginPlay()
 	Super::BeginPlay();
 }
 
+void AEnemyGridPawn::InitMaterial(FColor EnemyColor)
+{
+	EnemyMaterialInstance = UMaterialInstanceDynamic::Create(MeshComponent->GetMaterial(0), nullptr);
+	MeshComponent->SetMaterial(0, EnemyMaterialInstance);
+
+	EnemyMaterialInstance->SetVectorParameterValue(TEXT("BaseColor"), EnemyColor);
+
+}
+
+void AEnemyGridPawn::FrightenedBlinkMaterial(bool bIsFrightened)
+{
+	EnemyMaterialInstance->SetScalarParameterValue(TEXT("IsFrightened"), (bIsFrightened? 1.f:0.f));
+}
 
 void AEnemyGridPawn::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -42,11 +58,12 @@ void AEnemyGridPawn::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AA
 }
 
 
-
+/*
 void AEnemyGridPawn::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	//USALO DOPO PER CAPIRE QUANDO SBATTE SUL MURO
 	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s ha sbattuto su %s"), *HitComponent->GetName(), *OtherActor->GetName()));
-	SetActorLocation(VectorGridSnap(GetActorLocation()));
+	//SetActorLocation(VectorGridSnap(GetActorLocation()));
 
 }
+*/

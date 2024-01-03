@@ -100,7 +100,7 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 
 void AGridPawn::ForceDirection(const FVector NewDirection)
 {
-
 	CurrentDirection = NewDirection;
+	SetActorLocation(VectorGridSnap(GetActorLocation()));
 
 }

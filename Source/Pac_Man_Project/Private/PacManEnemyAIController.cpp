@@ -5,7 +5,7 @@
 
 #include "GridUtilities.h"
 #include "GridPawn.h"
-
+#include "PacManGameMode.h"
 
 #pragma optimize("", off)
 
@@ -31,31 +31,29 @@ void APacManEnemyAIController::OnPossess(APawn* InPawn)
 
 void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 {
-	//(1500, -1500, 0)
+	
+	auto EnemyData = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode())->GetEnemiesData();
+
+
+	
 	switch (NewState)
 	{
 		case EEnemyState::Scatter:
-			if (EnemyType == EEnemyType::Blinky)
-				TargetCell = FVector(1500, -1500, 0);
-			if (EnemyType == EEnemyType::Pinky)
-				TargetCell = FVector(-1500, -1500, 0);
-			if (EnemyType == EEnemyType::Inky)
-				TargetCell = FVector(1500, 1500, 0);
-			if (EnemyType == EEnemyType::Clyde)
-				TargetCell = FVector(-1500, 1500, 0);
-
+			TargetCell = EnemyData->GetEnemyScatterCell(EnemyType);
 			break;
+
 		case EEnemyState::Chase:
-
 			break;
+
 		case EEnemyState::Frightened:
-
 			break;
+
 		default:
 			//In any other case return to the ghosthouse
 			TargetCell = FVector::ZeroVector;
 			break;
 	}
+
 	State = NewState;
 }
 

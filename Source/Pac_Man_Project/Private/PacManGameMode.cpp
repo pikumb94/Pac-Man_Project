@@ -10,12 +10,17 @@
 #include "PacManGameInstance.h"
 #include "PacManEnemyAIController.h"
 #include "EnemyGridPawn.h"
+#include "EnemyDataAsset.h"
 
 APacManGameMode::APacManGameMode()
 {
 	/* Assign the class types used by this gamemode */
 	PlayerControllerClass = APacManController::StaticClass();
 	DefaultPawnClass = AGridPawn::StaticClass();
+	
+	static ConstructorHelpers::FObjectFinder<UEnemyDataAsset> PacManDataAssetRef(TEXT("/ Script / Pac_Man_Project.EnemyDataAsset'/Game/Data/PacManEnemies.PacManEnemies'"));
+	if(PacManDataAssetRef.Succeeded())
+		EnemiesData = PacManDataAssetRef.Object;
 
 }
 
@@ -45,17 +50,18 @@ void APacManGameMode::SpawnEnemies()
 	ActorSpawnParams.bNoFail = true;
 	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	
-	//for (auto enemyType : TEnumRange<EEnemyType>())
-	//{
-	EEnemyType enemyType = EEnemyType::Blinky;
+	for (auto enemyType : TEnumRange<EEnemyType>())
+	{
+		//EEnemyType enemyType = EEnemyType::Blinky;
 		TObjectPtr<APacManEnemyAIController> EnemyController = GetWorld()->SpawnActor<APacManEnemyAIController>();
 		EnemyController->SetEnemyType(enemyType);
 
-		TObjectPtr<AEnemyGridPawn> EnemyPawn = GetWorld()->SpawnActor<AEnemyGridPawn>(EnemyPawnClass, FVector::ZeroVector, FRotator::ZeroRotator);
+		TObjectPtr<AEnemyGridPawn> EnemyPawn = GetWorld()->SpawnActor<AEnemyGridPawn>(EnemyPawnClass, EnemiesData->GetEnemyInitialCell(enemyType), FRotator::ZeroRotator);
+		EnemyPawn->InitMaterial(EnemiesData->GetEnemyMaterialColor(enemyType));
 
 		EnemyController->Possess(EnemyPawn);
 
-	//}
+	}
 
 }
 

@@ -21,7 +21,7 @@ class PAC_MAN_PROJECT_API APacManGameMode : public AGameModeBase
 
 	void SpawnEnemies();
 
-
+	TObjectPtr<class UEnemyDataAsset> EnemiesData;
 
 public:
 
@@ -36,5 +36,6 @@ public:
 
 	//If we reload a level because of a player completion or because of life loss
 	void ReloadLevel(bool bReduceLife=false);
- 
+
+	TObjectPtr<UEnemyDataAsset> GetEnemiesData() const{ return EnemiesData; };
 };

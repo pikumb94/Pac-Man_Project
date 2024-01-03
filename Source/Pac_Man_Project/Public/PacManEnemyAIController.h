@@ -4,12 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Controller.h"
+#include "EnemyDataAsset.h"
+
 #include "PacManEnemyAIController.generated.h"
 
 /**
  * This controller implements the AI of PacMan's enemies trying to mimic the original games's
  * technique: reching a target destination (cell) prior a decision based on the ghost character
  */
+
 
 UENUM(BlueprintType)
 enum class EEnemyState : uint8 {
@@ -19,14 +22,6 @@ enum class EEnemyState : uint8 {
 	Frightened
 };
 
-UENUM(BlueprintType)
-enum class EEnemyType : uint8 {
-	Blinky = 0,		//Shadow - Red
-	Pinky,			//Speedy - Pink
-	Inky,			//Bashful - Cyan
-	Clyde			//Pokey - Orange
-};
-ENUM_RANGE_BY_FIRST_AND_LAST(EEnemyType, EEnemyType::Blinky, EEnemyType::Clyde);
 
 UCLASS(BlueprintType, Blueprintable)
 class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
@@ -41,7 +36,7 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 
 	EEnemyState State = EEnemyState::Idle;
 
-	EEnemyType EnemyType = EEnemyType::Blinky;
+	EEnemyType EnemyType;
 
 	TObjectPtr<class AGridPawn> ControlledGridPawn;
 
