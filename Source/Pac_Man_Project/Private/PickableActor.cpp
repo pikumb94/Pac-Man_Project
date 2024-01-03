@@ -9,7 +9,7 @@
 APickableActor::APickableActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	//The Collider for this actor will be a simplified box collision rounding the mesh
@@ -25,18 +25,3 @@ void APickableActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor*
 	OnPickedAction(Other);
 	Destroy();
 }
-
-// Called when the game starts or when spawned
-void APickableActor::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void APickableActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

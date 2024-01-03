@@ -7,8 +7,9 @@
 #include "PacManController.generated.h"
 
 /**
- * 
+ * The player controller: it simply forwards the movement direction to the AGridPawn
  */
+
 UCLASS()
 class PAC_MAN_PROJECT_API APacManController : public APlayerController
 {

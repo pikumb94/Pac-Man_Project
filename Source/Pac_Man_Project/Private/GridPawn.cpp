@@ -36,6 +36,9 @@ void AGridPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MovementComponent->AddInputVector(CurrentDirection);
+
+	//In a more light version we can use this but raycast should be used to replace normal collision detection
+	//SetActorLocation(GetActorLocation() + CurrentDirection * GridVelocity * DeltaTime);
 }
 
 // Called to bind functionality to input

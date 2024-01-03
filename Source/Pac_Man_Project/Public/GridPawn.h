@@ -1,10 +1,14 @@
-// A GridPawn is a pawn moving alongside a grid in wordcoordinate and of size GridConstants::GridSize
+
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "GridPawn.generated.h"
+
+/**
+ * A GridPawn is a pawn moving alongside a grid in a plane constrained to z=0 and of size GridConstants::GridSize
+ */
 
 UCLASS()
 class PAC_MAN_PROJECT_API AGridPawn : public APawn

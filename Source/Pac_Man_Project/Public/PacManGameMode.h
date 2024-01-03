@@ -7,8 +7,9 @@
 #include "PacManGameMode.generated.h"
 
 /**
- * 
+ * It manages the new level instance: sets up the game, its events and end condition
  */
+
 UCLASS()
 class PAC_MAN_PROJECT_API APacManGameMode : public AGameModeBase
 {
@@ -24,7 +25,7 @@ class PAC_MAN_PROJECT_API APacManGameMode : public AGameModeBase
 
 public:
 
-	// Enemy Pawn Class to spawn
+	// Enemy Pawn Class to spawn: this will be the blueprint version of AEnemyGridPawn
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class AEnemyGridPawn> EnemyPawnClass;
 
@@ -33,6 +34,7 @@ public:
 	UFUNCTION()
 	void CheckLevelCompleted(int ScoreToAdd);
 
+	//If we reload a level because of a player completion or because of life loss
 	void ReloadLevel(bool bReduceLife=false);
  
 };

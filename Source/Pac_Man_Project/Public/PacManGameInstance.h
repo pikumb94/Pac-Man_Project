@@ -14,8 +14,9 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLivesChanged, int, NewLives);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnGameOver);
 
 /**
- * 
+ * The persistent game state: the relative events to update and initialize the game state are defined here
  */
+
 UCLASS()
 class PAC_MAN_PROJECT_API UPacManGameInstance : public UGameInstance
 {
@@ -24,6 +25,7 @@ class PAC_MAN_PROJECT_API UPacManGameInstance : public UGameInstance
 	int64 score = 0;
 	int lives = 2;
 	int level = 1;
+
 public:
 
 	UFUNCTION(BlueprintCallable)

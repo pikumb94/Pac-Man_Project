@@ -24,7 +24,6 @@ AEnemyGridPawn::AEnemyGridPawn()
 void AEnemyGridPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	ForceDirection(-FVector::RightVector);
 }
 
 

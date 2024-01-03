@@ -37,21 +37,3 @@ inline FVector VectorGridSnap(const FVector& Point, float CustomGridSize = 0.f)
 	return SnappedVector;
 	
 }
-/*
-//returns the index of a given direction in the GridVersorArray
-inline int directionArrayIndex(FVector dir) {
-
-	if (dir == -FVector::RightVector)
-		return 0;
-
-	if (dir == -FVector::ForwardVector)
-		return 1;
-
-	if (dir == FVector::RightVector)
-		return 2;
-
-	if (dir == FVector::ForwardVector)
-		return 3;
-
-	return -1;
-}*/

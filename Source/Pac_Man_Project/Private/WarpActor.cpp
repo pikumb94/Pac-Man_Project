@@ -21,19 +21,6 @@ AWarpActor::AWarpActor()
 
 }
 
-// Called when the game starts or when spawned
-void AWarpActor::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AWarpActor::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
 void AWarpActor::OnWarpEnter(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor && WarpActorDestination)

@@ -45,8 +45,9 @@ void APacManGameMode::SpawnEnemies()
 	ActorSpawnParams.bNoFail = true;
 	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	
-	for (auto enemyType : TEnumRange<EEnemyType>())
-	{
+	//for (auto enemyType : TEnumRange<EEnemyType>())
+	//{
+	EEnemyType enemyType = EEnemyType::Blinky;
 		TObjectPtr<APacManEnemyAIController> EnemyController = GetWorld()->SpawnActor<APacManEnemyAIController>();
 		EnemyController->SetEnemyType(enemyType);
 
@@ -54,7 +55,7 @@ void APacManGameMode::SpawnEnemies()
 
 		EnemyController->Possess(EnemyPawn);
 
-	}
+	//}
 
 }
 
