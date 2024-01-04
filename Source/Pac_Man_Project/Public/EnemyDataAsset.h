@@ -6,11 +6,6 @@
 #include "Engine/DataAsset.h"
 #include "EnemyDataAsset.generated.h"
 
-/**
- * The data for the different enemy types
- */
-
-
 UENUM(BlueprintType)
 enum class EEnemyType : uint8 {
 	Blinky = 0,		//Shadow - Red
@@ -24,15 +19,29 @@ USTRUCT()
 struct FEnemyInfo {
 	GENERATED_BODY()
 
+	FEnemyInfo()
+		: EnemyColor(FColor::White)
+		, ScatterCell(FVector::ZeroVector)
+		, InitialCell(FVector::ZeroVector)
+	{ };
+
+	//The default color of the enemy
 	UPROPERTY(EditAnywhere)
 	FColor EnemyColor;
 
+	//The target cell the enemy will try to reach in scatter state
 	UPROPERTY(EditAnywhere)
 	FVector ScatterCell;
 
+	//The Initial cell where enemy will be spawned
 	UPROPERTY(EditAnywhere)
 	FVector InitialCell;
 };
+
+
+/**
+ * The data for the different enemy types
+ */
 
 UCLASS()
 class PAC_MAN_PROJECT_API UEnemyDataAsset : public UDataAsset

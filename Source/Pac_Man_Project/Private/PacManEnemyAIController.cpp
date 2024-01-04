@@ -169,7 +169,7 @@ void APacManEnemyAIController::Tick(float DeltaTime)
 	CurrentCell = VectorGridSnap(ControlledGridPawn->GetActorLocation());
 	FVector CurrentLocation = ControlledGridPawn->GetActorLocation();
 
-	if ((CurrentLocation-NextCell).Size() <12.5f || (CurrentCell - NextCell).Size() > GridConstants::GridSize) {
+	if ((CurrentLocation-NextCell).Size() <12.5f || (CurrentCell - NextCell).Size() > GridConstants::GridSize || ControlledGridPawn->GetVelocity().SizeSquared2D()<=0.f) {
 
 		FVector NextDirection = DecideNextDirection();
 		ControlledGridPawn->ForceDirection(NextDirection);
