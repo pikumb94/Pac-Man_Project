@@ -2,7 +2,7 @@
 
 
 #include "PickableEnergizer.h"
-#include "PacManGameMode.h"
+#include "Framework/PacManGameMode.h"
 
 void APickableEnergizer::OnPickedAction(AActor* Other)
 {

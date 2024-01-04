@@ -40,9 +40,17 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 
 	TObjectPtr<class AEnemyGridPawn> ControlledGridPawn;
 
-	FVector DecideNextDirection();
+	FVector DecideNextDirection(bool isChangingState=false);
+
+	FVector ApplyEnemyTypeDecision(const TArray<bool>& AvailableDirectionsArray);
 
 	FVector NextCell = FVector::ZeroVector;
+
+	//Next cell decision policies: are simply or the closest to the target cell or random
+	FVector ClosestToTargetCellPolicy(const TArray<bool>& AvailableDirectionsArray);
+	FVector RandomChoicePolicy(const TArray<bool>& AvailableDirectionsArray);
+	
+	void UpdateChaseTargetCell();
 
 protected:
 	// Called when the game starts or when spawned

@@ -31,6 +31,15 @@ class PAC_MAN_PROJECT_API APacManGameMode : public AGameModeBase
 	UPROPERTY(EditDefaultsOnly)
 	float FrightenedModeDuration = 10.f;
 
+	FTimerHandle ScatterNChaseTimerHandle;
+	// How many seconds lasts the Scatter mode
+	UPROPERTY(EditDefaultsOnly)
+	float ScatterModeDuration = 5.f;
+	// How many seconds lasts the Chase mode
+	UPROPERTY(EditDefaultsOnly)
+	float ChaseModeDuration = 10.f;
+	void FlipFlopScatterChase();
+
 protected:
 	// Enemy Pawn Class to spawn: this will be the blueprint version of AEnemyGridPawn
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

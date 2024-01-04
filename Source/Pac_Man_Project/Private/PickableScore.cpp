@@ -2,7 +2,7 @@
 
 
 #include "PickableScore.h"
-#include "PacManGameMode.h"
+#include "Framework/PacManGameMode.h"
 
 void APickableScore::OnPickedAction(AActor* Other)
 {

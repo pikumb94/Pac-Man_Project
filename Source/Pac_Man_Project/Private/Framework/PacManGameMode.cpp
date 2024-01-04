@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PacManGameMode.h"
+#include "Framework/PacManGameMode.h"
 
 #include "PacManController.h"
 #include "GridPawn.h"
 #include "PickableActor.h"
 #include "Kismet/GameplayStatics.h"
-#include "PacManGameInstance.h"
+#include "Framework/PacManGameInstance.h"
 #include "PacManEnemyAIController.h"
 #include "EnemyGridPawn.h"
 #include "EnemyDataAsset.h"
@@ -24,6 +24,22 @@ APacManGameMode::APacManGameMode()
 
 }
 
+void APacManGameMode::FlipFlopScatterChase()
+{
+	if (GetWorldTimerManager().GetTimerRate(ScatterNChaseTimerHandle) == ScatterModeDuration) {
+
+		GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [&]() {FlipFlopScatterChase();}, ChaseModeDuration, false);
+
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Chase")));
+
+	}
+	else {
+		GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [&]() {FlipFlopScatterChase();}, ScatterModeDuration, false);
+
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Scatter")));
+	}
+}
+
 void APacManGameMode::StartPlay()
 {
 	Super::StartPlay();
@@ -34,6 +50,12 @@ void APacManGameMode::StartPlay()
 	remainingScorePellets = AllPickableScores.Num();
 
 	SpawnEnemies();
+
+	GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [this]() {
+
+		FlipFlopScatterChase();
+
+	}, ScatterModeDuration, false);
 }
 
 void APacManGameMode::SpawnEnemies()

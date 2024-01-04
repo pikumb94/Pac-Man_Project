@@ -18,13 +18,7 @@ AEnemyGridPawn::AEnemyGridPawn()
 
 	//CON IL GIUSTO COLLIDER NON SERVE
 	//MeshComponent->OnComponentHit.AddDynamic(this, &AEnemyGridPawn::OnComponentHit);
-	/*
-	TObjectPtr<APacManGameMode> GM = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode());
 
-	if (GM) {
-		GM->OnFrightenedChanged.AddDynamic(this, &AEnemyGridPawn::OnFrightenedChanged);
-	}
-	*/
 }
 
 
@@ -63,12 +57,11 @@ void AEnemyGridPawn::OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AA
 }
 
 
-/*
+
 void AEnemyGridPawn::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
 	//USALO DOPO PER CAPIRE QUANDO SBATTE SUL MURO
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s ha sbattuto su %s"), *HitComponent->GetName(), *OtherActor->GetName()));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s ha sbattuto su %s"), *HitComponent->GetName(), *OtherActor->GetName()));
 	//SetActorLocation(VectorGridSnap(GetActorLocation()));
 
 }
-*/
