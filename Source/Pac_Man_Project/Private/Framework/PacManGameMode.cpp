@@ -26,17 +26,24 @@ APacManGameMode::APacManGameMode()
 
 void APacManGameMode::FlipFlopScatterChase()
 {
+
+
 	if (GetWorldTimerManager().GetTimerRate(ScatterNChaseTimerHandle) == ScatterModeDuration) {
+		GetWorldTimerManager().ClearTimer(ScatterNChaseTimerHandle);
 
 		GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [&]() {FlipFlopScatterChase();}, ChaseModeDuration, false);
 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Chase")));
+		OnChangeState.Broadcast(EEnemyState::Chase);
 
 	}
 	else {
+		GetWorldTimerManager().ClearTimer(ScatterNChaseTimerHandle);
+
 		GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [&]() {FlipFlopScatterChase();}, ScatterModeDuration, false);
 
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Scatter")));
+		OnChangeState.Broadcast(EEnemyState::Scatter);
 	}
 }
 
@@ -56,6 +63,21 @@ void APacManGameMode::StartPlay()
 		FlipFlopScatterChase();
 
 	}, ScatterModeDuration, false);
+}
+
+void APacManGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorldTimerManager().ClearTimer(ScatterNChaseTimerHandle);
+	GetWorldTimerManager().ClearTimer(FrightenedTimerHandle);
+
+	
+}
+
+void APacManGameMode::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void APacManGameMode::SpawnEnemies()
@@ -98,15 +120,15 @@ void APacManGameMode::ReloadLevel(bool bReduceLife)
 		if (bReduceLife)
 		{
 			//player collided with the enemy, reduce by 1 the lives and reload the same level
-			int remainingLives = GI->GetLives() -1;
+			//int remainingLives = 
+			GI->SetLives(GI->GetLives() - 1);
 
-			if (remainingLives <= 0)
+			if (GI->GetLives() <= 0)
 			{
 				GI->OnGameOver.Broadcast();
 			}
 			else
 			{
-				GI->SetLives(remainingLives);
 				UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
 			}
 			
@@ -127,12 +149,14 @@ void APacManGameMode::TriggerFrightened()
 		GetWorldTimerManager().ClearTimer(FrightenedTimerHandle);
 	}
 
-
-	OnFrightenedChanged.Broadcast(true);
+	GetWorldTimerManager().PauseTimer(ScatterNChaseTimerHandle);
+	OnChangeState.Broadcast(EEnemyState::Frightened);
 
 	GetWorldTimerManager().SetTimer(FrightenedTimerHandle, [this]() {
 
-		OnFrightenedChanged.Broadcast(false);
+		OnChangeState.Broadcast(EEnemyState::Scatter);
+		GetWorldTimerManager().UnPauseTimer(ScatterNChaseTimerHandle);
+
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("FRIGHT FINITA!")));
 
 	}, FrightenedModeDuration, false);

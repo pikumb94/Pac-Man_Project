@@ -37,6 +37,7 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 	EEnemyState State = EEnemyState::Idle;
 
 	EEnemyType EnemyType;
+	const FEnemyInfo* EnemyInfo;
 
 	TObjectPtr<class AEnemyGridPawn> ControlledGridPawn;
 
@@ -52,6 +53,10 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 	
 	void UpdateChaseTargetCell();
 
+	//How much decreases the velocity from the standard value
+	UPROPERTY(EditDefaultsOnly)
+	float frightenedMalusVelocity = 1.5f;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -64,11 +69,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void ChangeEnemyState(EEnemyState NewState);
+	
 	void SetEnemyType(EEnemyType NewType) { EnemyType = NewType; };
 
 	void PawnOverlappedPlayerHandler();
 
 	UFUNCTION()
-	void OnFrightenedHandler(bool NewFrightenedValue);
+	void ChangeEnemyState(EEnemyState NewState);
 };

@@ -7,7 +7,7 @@
 #include "PacManGameMode.generated.h"
 
 //Frightened events: triggers when the player picks an energizer
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnFrightenedChanged, bool, IsFrightened);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeState, EEnemyState, NewState);
 
 /**
  * It manages the new level instance: sets up the game, its events and end condition
@@ -34,10 +34,10 @@ class PAC_MAN_PROJECT_API APacManGameMode : public AGameModeBase
 	FTimerHandle ScatterNChaseTimerHandle;
 	// How many seconds lasts the Scatter mode
 	UPROPERTY(EditDefaultsOnly)
-	float ScatterModeDuration = 5.f;
+	float ScatterModeDuration = 7.f;
 	// How many seconds lasts the Chase mode
 	UPROPERTY(EditDefaultsOnly)
-	float ChaseModeDuration = 10.f;
+	float ChaseModeDuration = 20.f;
 	void FlipFlopScatterChase();
 
 protected:
@@ -46,16 +46,19 @@ protected:
 	TSubclassOf<class AEnemyGridPawn> EnemyPawnClass;
 
 public:
-
+	
 	virtual void StartPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void BeginPlay() override;
 
 	void UpdateNCheckLevelCompleted();
 
 	//If we reload a level because of a player completion or because of life loss
 	void ReloadLevel(bool bReduceLife=false);
 
+	//This event is triggered by the timers and the pellet energizer and makes the enemies change their state accordingly
 	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnFrightenedChanged OnFrightenedChanged;
+	FOnChangeState OnChangeState;
 
 	TObjectPtr<UEnemyDataAsset> GetEnemiesData() const{ return EnemiesData; };
 

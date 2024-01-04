@@ -38,7 +38,7 @@ public:
 	int64 GetScore() { return score; };
 
 	UFUNCTION(BlueprintCallable)
-	void SetLives(int NewLives) { lives = NewLives; };
+	void SetLives(int NewLives) { lives = NewLives; OnLivesChanged.Broadcast(lives);};
 	UFUNCTION(BlueprintCallable)
 	int GetLives() { return lives; };
 

@@ -56,4 +56,5 @@ public:
 	FVector GetEnemyScatterCell(EEnemyType enemyType) const { return AssetItems[enemyType].ScatterCell; };
 	FVector GetEnemyInitialCell(EEnemyType enemyType) const { return AssetItems[enemyType].InitialCell; };
 
+	FEnemyInfo* GetEnemyInfoPtr(EEnemyType enemyType) { return &AssetItems[enemyType]; };
 };

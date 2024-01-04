@@ -21,7 +21,7 @@ class PAC_MAN_PROJECT_API AGridPawn : public APawn
 
 	// The velocity of the actor (as unit per second)
 	UPROPERTY(EditDefaultsOnly)
-	float GridVelocity = 700.0f;
+	float baseGridVelocity = 700.0f;
 
 
 	// Movement component
@@ -54,4 +54,8 @@ public:
 	void SetDirection(const FVector NewDirection);
 
 	void ForceDirection(const FVector NewDirection);
+
+	void SetGridVelocity(float NewMaxGridVelocity);
+	float GetGridVelocity();
+	void ResetGridVelocity();
 };

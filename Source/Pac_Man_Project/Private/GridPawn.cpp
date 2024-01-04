@@ -18,7 +18,7 @@ AGridPawn::AGridPawn()
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	MovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("Movement"));
-	MovementComponent->MaxSpeed = GridVelocity;
+	MovementComponent->MaxSpeed = baseGridVelocity;
 
 	SetRootComponent(MeshComponent);
 
@@ -107,4 +107,19 @@ void AGridPawn::ForceDirection(const FVector NewDirection)
 	CurrentDirection = NewDirection;
 
 
+}
+
+void AGridPawn::SetGridVelocity(float NewMaxGridVelocity)
+{
+	MovementComponent->MaxSpeed = NewMaxGridVelocity;
+}
+
+float AGridPawn::GetGridVelocity()
+{
+	return MovementComponent->MaxSpeed;
+}
+
+void AGridPawn::ResetGridVelocity()
+{
+	MovementComponent->MaxSpeed = baseGridVelocity;
 }

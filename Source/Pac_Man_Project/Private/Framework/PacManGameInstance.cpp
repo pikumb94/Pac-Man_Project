@@ -6,8 +6,7 @@
 void UPacManGameInstance::AddScore(int scoreToAdd)
 {
 	if ((score + scoreToAdd) % bonusLifeThreshold < score % bonusLifeThreshold) {
-		lives++;
-		OnLivesChanged.Broadcast(lives);
+		SetLives(lives + 1);
 	}
 
 	score += scoreToAdd;
