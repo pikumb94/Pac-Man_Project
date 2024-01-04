@@ -67,11 +67,20 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 			ControlledGridPawn->FrightenedBlinkMaterial(false);
 			ControlledGridPawn->ResetGridVelocity();
 
+			//Force Inverse Direction
+			ControlledGridPawn->ForceDirection(-ControlledGridPawn->GetMovingDirection());
+			NextCell = CurrentCell;
+			//
 			break;
 
 		case EEnemyState::Frightened:
 			ControlledGridPawn->FrightenedBlinkMaterial(true);
 			ControlledGridPawn->SetGridVelocity(ControlledGridPawn->GetGridVelocity() / frightenedMalusVelocity);
+			
+			//Force Inverse Direction
+			ControlledGridPawn->ForceDirection(-ControlledGridPawn->GetMovingDirection());
+			NextCell = CurrentCell;
+			//
 			break;
 
 		default:
@@ -95,9 +104,11 @@ void APacManEnemyAIController::PawnOverlappedPlayerHandler()
 
 		if (State == EEnemyState::Frightened) {
 
+			//Teleport and set to scatter
+			//TODO: use Idle to move to initial cell rather than teleport
 			GetWorldTimerManager().SetTimerForNextTick([GM,this]() {
 				ControlledGridPawn->SetActorLocation(EnemyInfo->InitialCell	);
-
+				ChangeEnemyState(EEnemyState::Scatter);
 			});
 
 			//TODO: GIVE INCREASING SCORE TO PLAYER=> for now a fixed amount
