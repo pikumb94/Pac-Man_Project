@@ -33,7 +33,6 @@ void APacManGameMode::FlipFlopScatterChase()
 
 		GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [&]() {FlipFlopScatterChase();}, ChaseModeDuration, false);
 
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("Chase")));
 		OnChangeState.Broadcast(EEnemyState::Chase);
 
 	}
@@ -42,7 +41,6 @@ void APacManGameMode::FlipFlopScatterChase()
 
 		GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [&]() {FlipFlopScatterChase();}, ScatterModeDuration, false);
 
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("Scatter")));
 		OnChangeState.Broadcast(EEnemyState::Scatter);
 	}
 }
@@ -156,8 +154,6 @@ void APacManGameMode::TriggerFrightened()
 
 		OnChangeState.Broadcast(EEnemyState::Scatter);
 		GetWorldTimerManager().UnPauseTimer(ScatterNChaseTimerHandle);
-
-		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("FRIGHT FINITA!")));
 
 	}, FrightenedModeDuration, false);
 }

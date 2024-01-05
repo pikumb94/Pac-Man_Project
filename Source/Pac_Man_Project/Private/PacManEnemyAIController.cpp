@@ -67,19 +67,21 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 			ControlledGridPawn->FrightenedBlinkMaterial(false);
 			ControlledGridPawn->ResetGridVelocity();
 
-			//Force Inverse Direction
+			//Force Inverse Direction and an invalid next cell to force correct NextCell computation
 			ControlledGridPawn->ForceDirection(-ControlledGridPawn->GetMovingDirection());
-			NextCell = CurrentCell;
+			NextCell = FVector::ZeroVector;
 			//
 			break;
 
 		case EEnemyState::Frightened:
 			ControlledGridPawn->FrightenedBlinkMaterial(true);
-			ControlledGridPawn->SetGridVelocity(ControlledGridPawn->GetGridVelocity() / frightenedMalusVelocity);
+			//Apply velocity malus only when entering the first time in the frightened mode
+			if(State != EEnemyState::Frightened)
+				ControlledGridPawn->SetGridVelocity(ControlledGridPawn->GetGridVelocity() / frightenedMalusVelocity);
 			
-			//Force Inverse Direction
+			//Force Inverse Direction and an invalid next cell to force correct NextCell computation
 			ControlledGridPawn->ForceDirection(-ControlledGridPawn->GetMovingDirection());
-			NextCell = CurrentCell;
+			NextCell = FVector::ZeroVector;
 			//
 			break;
 
@@ -318,7 +320,7 @@ void APacManEnemyAIController::Tick(float DeltaTime)
 	CurrentCell = VectorGridSnap(ControlledGridPawn->GetActorLocation());
 	FVector CurrentLocation = ControlledGridPawn->GetActorLocation();
 
-	bool hasReachedNextCell = (CurrentLocation - NextCell).Size() < 25.f;
+	bool hasReachedNextCell = (CurrentLocation - NextCell).Size() < 12.5f;
 	bool hasSkippedNextCell = (CurrentCell - NextCell).Size() > GridConstants::GridSize;
 	bool isStuck = ControlledGridPawn->GetVelocity().SizeSquared2D() <= 0.f;
 
@@ -329,6 +331,9 @@ void APacManEnemyAIController::Tick(float DeltaTime)
 	if (hasSkippedNextCell)
 		DrawDebugCircle(GetWorld(), NextCell, 25, 25,
 			FColor::Purple, false, 2, 0, 0, FVector::RightVector, FVector::ForwardVector);
+	if (isStuck)
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, FString::Printf(TEXT("SONO STUCK!")));
+
 
 	if (hasReachedNextCell ||					//The new cell is recomputed if we reach the next cell
 		hasSkippedNextCell)// ||	//Error recovery: enemy is moving far from next cell

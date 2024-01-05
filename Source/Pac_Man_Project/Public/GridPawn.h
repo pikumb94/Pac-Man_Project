@@ -56,7 +56,10 @@ public:
 
 	void ForceDirection(const FVector NewDirection);
 
+	UFUNCTION(BlueprintCallable)
 	void SetGridVelocity(float NewMaxGridVelocity);
+	UFUNCTION(BlueprintCallable)
 	float GetGridVelocity();
+	UFUNCTION(BlueprintCallable)
 	void ResetGridVelocity();
 };
