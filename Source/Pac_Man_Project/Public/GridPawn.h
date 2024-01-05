@@ -23,7 +23,8 @@ class PAC_MAN_PROJECT_API AGridPawn : public APawn
 	UPROPERTY(EditDefaultsOnly)
 	float baseGridVelocity = 600.0f;
 
-
+	bool isCornering = false;
+	
 	// Movement component
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr <class UFloatingPawnMovement> MovementComponent;

@@ -79,17 +79,29 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 
 
 		// If the pawn is cornering, snap it on the grid
-		bool isCornering = FVector::DotProduct(CurrentDirection, NewDirection) == 0.f;
-		if (isCornering) {
-
-			if (LastInputGridPosition == VectorGridSnap(GetActorLocation())) {
-				return;
-			}
-			SetActorLocation(VectorGridSnap(GetActorLocation()));
+		bool isValidInputCorner = FVector::DotProduct(CurrentDirection, NewDirection) == 0.f;
+		
+		if (LastInputGridPosition != VectorGridSnap(GetActorLocation()))
+		{
+			isCornering = false;
+			//We invalidate the vector using a player unreachable cell location
+			LastInputGridPosition = FVector::ZeroVector;
 
 		}
+		
+		if (isCornering && isValidInputCorner) {
 
-		LastInputGridPosition = VectorGridSnap(GetActorLocation());
+			return;
+		}
+
+		if (isValidInputCorner) {
+
+			SetActorLocation(VectorGridSnap(GetActorLocation()));
+			LastInputGridPosition = VectorGridSnap(GetActorLocation());
+
+			isCornering = true;
+
+		}
 
 		//Update the new current Direction
 		CurrentDirection = NewDirection;

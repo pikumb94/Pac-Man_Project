@@ -3,35 +3,31 @@
 
 #include "PacManController.h"
 #include "GridPawn.h"
+#include "InputMappingContext.h"
+#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 
 void APacManController::SetupInputComponent() {
     Super::SetupInputComponent();
-    InputComponent->BindAction("MoveUp", IE_Pressed, this, &APacManController::MoveUp);
-    InputComponent->BindAction("MoveDown", IE_Pressed, this, &APacManController::MoveDown);
-    InputComponent->BindAction("MoveLeft", IE_Pressed, this, &APacManController::MoveLeft);
-    InputComponent->BindAction("MoveRight", IE_Pressed, this, &APacManController::MoveRight);
+
+    // Get the local player subsystem
+    UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
+
+    // Clear out existing mapping, and add our mapping
+    Subsystem->ClearAllMappings();
+    Subsystem->AddMappingContext(InputMapping, 0);
+
+    UEnhancedInputComponent* EIC = Cast<UEnhancedInputComponent>(InputComponent);
+
+    EIC->BindAction(InputMove, ETriggerEvent::Triggered, this, &APacManController::MovePlayer);
+
 }
 
-void APacManController::MoveUp() {
+void APacManController::MovePlayer(const FInputActionInstance& InputInstance)
+{
+    FVector2D AxisInput2D = InputInstance.GetValue().Get<FVector2D>();
     if (auto PacManPawn = Cast<AGridPawn>(GetPawn())) {
-        PacManPawn->SetDirection(FVector::LeftVector);
-    }
-}
-
-void APacManController::MoveDown() {
-    if (auto PacManPawn = Cast<AGridPawn>(GetPawn())) {
-        PacManPawn->SetDirection(FVector::RightVector);
-    }
-}
-
-void APacManController::MoveLeft() {
-    if (auto PacManPawn = Cast<AGridPawn>(GetPawn())) {
-        PacManPawn->SetDirection(FVector::BackwardVector);
-    }
-}
-
-void APacManController::MoveRight() {
-    if (auto PacManPawn = Cast<AGridPawn>(GetPawn())) {
-        PacManPawn->SetDirection(FVector::ForwardVector);
+        AxisInput2D.Y *= -1.0;
+        PacManPawn->SetDirection(FVector(AxisInput2D,0));
     }
 }

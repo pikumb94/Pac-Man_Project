@@ -17,10 +17,15 @@ class PAC_MAN_PROJECT_API APacManController : public APlayerController
 
 protected:
     void SetupInputComponent() override;
+    
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+    class UInputMappingContext* InputMapping;
 
 public:
-    void MoveUp();
-    void MoveDown();
-    void MoveLeft();
-    void MoveRight();
+
+    void MovePlayer(const struct FInputActionInstance& InputInstance);
+
+public:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+    class UInputAction* InputMove;
 };
