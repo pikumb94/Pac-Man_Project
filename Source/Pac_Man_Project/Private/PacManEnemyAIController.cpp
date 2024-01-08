@@ -109,7 +109,7 @@ void APacManEnemyAIController::PawnOverlappedPlayerHandler()
 			//Teleport and set to scatter
 			//TODO: use Idle to move to initial cell rather than teleport
 			GetWorldTimerManager().SetTimerForNextTick([GM,this]() {
-				ControlledGridPawn->SetActorLocation(EnemyInfo->InitialCell	);
+				ControlledGridPawn->SetActorLocation(EnemyInfo->InitialCell);
 				ChangeEnemyState(EEnemyState::Scatter);
 			});
 
@@ -117,7 +117,7 @@ void APacManEnemyAIController::PawnOverlappedPlayerHandler()
 			TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>();
 			if (GI)
 			{
-				GI->AddScore(1000);
+				GI->AddScore(ghostBaseValue, true);
 			}
 			//
 		}

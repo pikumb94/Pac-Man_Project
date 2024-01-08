@@ -57,6 +57,10 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 	UPROPERTY(EditDefaultsOnly)
 	float frightenedMalusVelocity = 1.5f;
 
+	//Score value of the eaten ghost
+	UPROPERTY(EditDefaultsOnly)
+	int ghostBaseValue = 200;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

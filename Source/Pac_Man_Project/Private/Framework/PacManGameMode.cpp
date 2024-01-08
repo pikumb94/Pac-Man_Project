@@ -51,16 +51,16 @@ void APacManGameMode::StartPlay()
 
 	TArray<TObjectPtr<AActor>> AllPickableScores;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APickableActor::StaticClass(), AllPickableScores);
-
 	remainingScorePellets = AllPickableScores.Num();
+
+	
+
+	if (TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>())
+		auto retrrr = GI->GetCurrentLevelParams();
 
 	SpawnEnemies();
 
-	GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [this]() {
 
-		FlipFlopScatterChase();
-
-	}, ScatterModeDuration, false);
 }
 
 void APacManGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -76,6 +76,13 @@ void APacManGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void APacManGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [this]() {
+
+		FlipFlopScatterChase();
+
+	}, ScatterModeDuration, false);
+
 }
 
 void APacManGameMode::SpawnEnemies()
@@ -154,6 +161,9 @@ void APacManGameMode::TriggerFrightened()
 
 		OnChangeState.Broadcast(EEnemyState::Scatter);
 		GetWorldTimerManager().UnPauseTimer(ScatterNChaseTimerHandle);
+
+		if (TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>())
+			GI->ResetIncrementalValue();
 
 	}, FrightenedModeDuration, false);
 }

@@ -17,7 +17,7 @@ AEnemyGridPawn::AEnemyGridPawn()
 	MeshComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyGridPawn::OnEnemyOverlap);
 
 	//CON IL GIUSTO COLLIDER NON SERVE
-	MeshComponent->OnComponentHit.AddDynamic(this, &AEnemyGridPawn::OnComponentHit);
+	//MeshComponent->OnComponentHit.AddDynamic(this, &AEnemyGridPawn::OnComponentHit);
 
 }
 
