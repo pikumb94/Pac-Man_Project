@@ -29,16 +29,15 @@ void APacManEnemyAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	TObjectPtr<APacManGameMode> GM = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode());
-
-	if (GM) {
+	if (TObjectPtr<APacManGameMode> GM = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode())) {
 		EnemyInfo = GM->GetEnemiesData()->GetEnemyInfoPtr(EnemyType);
 		GM->OnChangeState.AddDynamic(this, &APacManEnemyAIController::ChangeEnemyState);
 	}
 
 	ControlledGridPawn = Cast<AEnemyGridPawn>(InPawn);
 
-	ChangeEnemyState(EEnemyState::Scatter);
+	State = EEnemyState::Scatter;
+	ChangeEnemyState(State);
 
 	CurrentCell = VectorGridSnap(ControlledGridPawn->GetActorLocation());
 	FVector NextDirection = DecideNextDirection();
@@ -53,18 +52,21 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 	//auto EnemyData = GM->GetEnemiesData();
 
 
-	//First set the state and variables accordingly
-	switch (NewState)
-	{
+	//If we are not in Idle, the usual logic applies so set the state and variables accordingly
+	if (State != EEnemyState::Idle) {
+		switch (NewState)
+		{
 		case EEnemyState::Scatter:
 			TargetCell = EnemyInfo->ScatterCell;
-			ControlledGridPawn->FrightenedBlinkMaterial(false);
+			ControlledGridPawn->SetBlinkEffectMaterial(false);
+			ControlledGridPawn->SetOpacityMaterial(1.f);
 			ControlledGridPawn->ResetGridVelocity();
 
 			break;
 
 		case EEnemyState::Chase:
-			ControlledGridPawn->FrightenedBlinkMaterial(false);
+			ControlledGridPawn->SetBlinkEffectMaterial(false);
+			ControlledGridPawn->SetOpacityMaterial(1.f);
 			ControlledGridPawn->ResetGridVelocity();
 
 			//Force Inverse Direction and an invalid next cell to force correct NextCell computation
@@ -74,11 +76,12 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 			break;
 
 		case EEnemyState::Frightened:
-			ControlledGridPawn->FrightenedBlinkMaterial(true);
+			ControlledGridPawn->SetBlinkEffectMaterial(true);
+			ControlledGridPawn->SetOpacityMaterial(1.f);
 			//Apply velocity malus only when entering the first time in the frightened mode
-			if(State != EEnemyState::Frightened)
-				ControlledGridPawn->SetGridVelocity(ControlledGridPawn->GetGridVelocity() / frightenedMalusVelocity);
-			
+			if (State != EEnemyState::Frightened)
+				ControlledGridPawn->SetToAlteredVelocity();
+
 			//Force Inverse Direction and an invalid next cell to force correct NextCell computation
 			ControlledGridPawn->ForceDirection(-ControlledGridPawn->GetMovingDirection());
 			NextCell = FVector::ZeroVector;
@@ -87,14 +90,21 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 
 		default:
 			//In any other case is Idle so return to the ghosthouse
-			ControlledGridPawn->FrightenedBlinkMaterial(false);
+			ControlledGridPawn->SetBlinkEffectMaterial(false);
+			ControlledGridPawn->SetOpacityMaterial(0.f);
 			TargetCell = EnemyInfo->InitialCell;
 			ControlledGridPawn->ResetGridVelocity();
 			break;
+
+		}
+
+
+		//Lastly update the state
+		State = NewState;
+
 	}
 
-	//Lastly update the state
-	State = NewState;
+
 }
 
 
@@ -108,21 +118,24 @@ void APacManEnemyAIController::PawnOverlappedPlayerHandler()
 
 			//Teleport and set to scatter
 			//TODO: use Idle to move to initial cell rather than teleport
+			/*
 			GetWorldTimerManager().SetTimerForNextTick([GM,this]() {
 				ControlledGridPawn->SetActorLocation(EnemyInfo->InitialCell);
 				ChangeEnemyState(EEnemyState::Scatter);
 			});
+			*/
+			ChangeEnemyState(EEnemyState::Idle);
 
-			//TODO: GIVE INCREASING SCORE TO PLAYER=> for now a fixed amount
 			TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>();
 			if (GI)
 			{
 				GI->AddScore(ghostBaseValue, true);
 			}
-			//
 		}
 		else {
-			GM->ReloadLevel(true);
+
+			if(State != EEnemyState::Idle)
+				GM->ReloadLevel(true);
 
 		}
 	}
@@ -331,13 +344,13 @@ void APacManEnemyAIController::Tick(float DeltaTime)
 	if (hasSkippedNextCell)
 		DrawDebugCircle(GetWorld(), NextCell, 25, 25,
 			FColor::Purple, false, 2, 0, 0, FVector::RightVector, FVector::ForwardVector);
-	if (isStuck)
+	/*if (isStuck)
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, FString::Printf(TEXT("SONO STUCK!")));
+	*/
 
-
-	if (hasReachedNextCell ||					//The new cell is recomputed if we reach the next cell
+	if (hasReachedNextCell ||		//The new cell is recomputed if we reach the next cell
 		hasSkippedNextCell)// ||	//Error recovery: enemy is moving far from next cell
-		//isStuck) 		//Error recovery: enemy is stuck
+		//isStuck) 					//Error recovery: enemy is stuck
 	{
 		FVector NextDirection = DecideNextDirection();
 		ControlledGridPawn->ForceDirection(NextDirection);
@@ -345,6 +358,13 @@ void APacManEnemyAIController::Tick(float DeltaTime)
 		NextCell = CurrentCell + NextDirection * GridConstants::GridSize;
 
 	}
+
+	if (State == EEnemyState::Idle && ((CurrentLocation - TargetCell).Size() < 12.5f || NextCell == TargetCell))
+	{
+		State = EEnemyState::Scatter;
+		ChangeEnemyState(State);
+	}
+
 	DrawDebugCircle(GetWorld(), TargetCell, 25, 25, EnemyInfo->EnemyColor,false, 1, 0, 0, FVector::RightVector, FVector::ForwardVector);
 
 	DrawDebugLine(GetWorld(), ControlledGridPawn->GetActorLocation(), ControlledGridPawn->GetActorLocation()+ControlledGridPawn->GetMovingDirection()*100, FColor::Green);

@@ -22,7 +22,9 @@ class PAC_MAN_PROJECT_API APacManGameMode : public AGameModeBase
 
 	int remainingScorePellets;
 
-	void SpawnEnemies();
+	void SpawnEnemies(const FLevelParamsStruct& InitParams);
+	UFUNCTION()
+	void SpawnEnemy(EEnemyType EnemyType, const FLevelParamsStruct& InitParams);
 
 	TObjectPtr<class UEnemyDataAsset> EnemiesData;
 

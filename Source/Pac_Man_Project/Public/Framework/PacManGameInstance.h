@@ -19,17 +19,18 @@ struct FLevelParamsStruct: public FTableRowBase
 {
 	GENERATED_BODY()
 
+	// Pawns velocities during different game modes
+	// Velocity is expressed as a percentage with respect to the MaxGridSpeed allowed
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float PlayerSpeed;
+	float PlayerSpeedPerc;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float EnemySpeed;
+	float EnemySpeedPerc;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PlayerFrightenedSpeedPerc;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float EnemyFrightenedSpeedPerc;
 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float PlayerFrightenedSpeed;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float EnemyFrightenedSpeed;
-
+	//How much the different pacman game states (scatter,chase,frightened) should last during the level
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int FrightenedModeDuration;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -88,6 +89,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ResetIncrementalValue() { IncrementalValue = 0; };
+
+	UFUNCTION(BlueprintCallable)
+	float GetMaxGridSpeed() { return MaxGridSpeed; };
 
 	FLevelParamsStruct* GetCurrentLevelParams();
 

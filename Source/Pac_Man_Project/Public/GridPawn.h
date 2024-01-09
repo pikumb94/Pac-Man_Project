@@ -19,15 +19,27 @@ class PAC_MAN_PROJECT_API AGridPawn : public APawn
 	FVector CurrentDirection = FVector::ZeroVector;
 	FVector LastInputGridPosition;
 
-	// The velocity of the actor (as unit per second)
-	UPROPERTY(EditDefaultsOnly)
-	float baseGridVelocity = 600.0f;
-
 	bool isCornering = false;
 	
 	// Movement component
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr <class UFloatingPawnMovement> MovementComponent;
+
+protected:
+	// The velocity of the actor (as unit per second)
+	UPROPERTY(EditDefaultsOnly)
+	float baseGridVelocity = 600.f;
+
+	// The velocity of the actor in different game state (e.g. frightened mode)
+	UPROPERTY(EditDefaultsOnly)
+	float alteredGridVelocity = 800.f;
+
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+	// Mesh component
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
 public:
 	// Sets default values for this pawn's properties
@@ -36,20 +48,13 @@ public:
 	// Getter for the current moving direction of the pawn
 	FVector GetMovingDirection() const { return CurrentDirection; };
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	// Mesh component
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UStaticMeshComponent> MeshComponent;
-
-public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void InitVelocities(float NormalGridVelocity, float AlternativeGridVelocity);
 
 	//The Pawn tries to pursue the given direction instantly
 	void SetDirection(const FVector NewDirection);
@@ -62,4 +67,7 @@ public:
 	float GetGridVelocity();
 	UFUNCTION(BlueprintCallable)
 	void ResetGridVelocity();
+
+	UFUNCTION(BlueprintCallable)
+	void SetToAlteredVelocity();
 };

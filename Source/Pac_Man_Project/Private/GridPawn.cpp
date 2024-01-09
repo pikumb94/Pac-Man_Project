@@ -49,6 +49,14 @@ void AGridPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void AGridPawn::InitVelocities(float NormalGridVelocity, float AlternativeGridVelocity)
+{
+	baseGridVelocity = NormalGridVelocity;
+	alteredGridVelocity = AlternativeGridVelocity;
+
+	SetGridVelocity(baseGridVelocity);
+}
+
 void AGridPawn::SetDirection(const FVector NewDirection)
 {
 	//As the Pacman game accept the new direction if and only if you are aligned column/row aligned
@@ -134,4 +142,9 @@ float AGridPawn::GetGridVelocity()
 void AGridPawn::ResetGridVelocity()
 {
 	MovementComponent->MaxSpeed = baseGridVelocity;
+}
+
+void AGridPawn::SetToAlteredVelocity()
+{
+	MovementComponent->MaxSpeed = alteredGridVelocity;
 }

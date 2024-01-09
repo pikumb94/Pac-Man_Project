@@ -53,10 +53,6 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 	
 	void UpdateChaseTargetCell();
 
-	//How much decreases the velocity from the standard value
-	UPROPERTY(EditDefaultsOnly)
-	float frightenedMalusVelocity = 1.5f;
-
 	//Score value of the eaten ghost
 	UPROPERTY(EditDefaultsOnly)
 	int ghostBaseValue = 200;

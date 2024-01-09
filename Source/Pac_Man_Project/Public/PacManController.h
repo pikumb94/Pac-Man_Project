@@ -21,6 +21,8 @@ protected:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
     class UInputMappingContext* InputMapping;
 
+    virtual void BeginPlay() override;
+
 public:
 
     void MovePlayer(const struct FInputActionInstance& InputInstance);
@@ -28,4 +30,8 @@ public:
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
     class UInputAction* InputMove;
+
+    //All player's updates when enemy state switches
+    UFUNCTION()
+    void UpdatePlayerBasedOnEnemyState(EEnemyState NewState);
 };

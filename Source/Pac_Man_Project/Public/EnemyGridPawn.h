@@ -26,7 +26,8 @@ public:
 
 	void InitMaterial(FColor EnemyColor);
 
-	void FrightenedBlinkMaterial(bool bIsFrightened);
+	void SetBlinkEffectMaterial(bool bIsFrightened);
+	void SetOpacityMaterial(float opacityValue);
 
 	UFUNCTION()
 	void OnEnemyOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

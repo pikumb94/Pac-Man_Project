@@ -27,12 +27,13 @@ APacManGameMode::APacManGameMode()
 void APacManGameMode::FlipFlopScatterChase()
 {
 
+	float CurrentDuration = GetWorldTimerManager().GetTimerRate(ScatterNChaseTimerHandle);
 
-	if (GetWorldTimerManager().GetTimerRate(ScatterNChaseTimerHandle) == ScatterModeDuration) {
+	if (CurrentDuration == ScatterModeDuration) {
 		GetWorldTimerManager().ClearTimer(ScatterNChaseTimerHandle);
 
 		GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [&]() {FlipFlopScatterChase();}, ChaseModeDuration, false);
-
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("CHASE")));
 		OnChangeState.Broadcast(EEnemyState::Chase);
 
 	}
@@ -40,6 +41,7 @@ void APacManGameMode::FlipFlopScatterChase()
 		GetWorldTimerManager().ClearTimer(ScatterNChaseTimerHandle);
 
 		GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [&]() {FlipFlopScatterChase();}, ScatterModeDuration, false);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, FString::Printf(TEXT("SCATTER")));
 
 		OnChangeState.Broadcast(EEnemyState::Scatter);
 	}
@@ -54,12 +56,23 @@ void APacManGameMode::StartPlay()
 	remainingScorePellets = AllPickableScores.Num();
 
 	
+	//Set all level parameters for the current level and spawn enemies
+	if (TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>()) {
+		FLevelParamsStruct* LevelParams = GI->GetCurrentLevelParams();
 
-	if (TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>())
-		auto retrrr = GI->GetCurrentLevelParams();
+		FrightenedModeDuration = LevelParams->FrightenedModeDuration;
+		ScatterModeDuration = LevelParams->ScatterModeDuration;
+		ChaseModeDuration = LevelParams->ChaseModeDuration;
 
-	SpawnEnemies();
+		SpawnEnemies(*LevelParams);
 
+		TObjectPtr<AGridPawn> PlayerPawn = Cast<AGridPawn>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+		PlayerPawn->InitVelocities(GI->GetMaxGridSpeed() * LevelParams->PlayerSpeedPerc,
+			GI->GetMaxGridSpeed() * LevelParams->PlayerFrightenedSpeedPerc);
+
+	}
+
+	FlipFlopScatterChase();
 
 }
 
@@ -77,34 +90,54 @@ void APacManGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [this]() {
-
-		FlipFlopScatterChase();
-
-	}, ScatterModeDuration, false);
-
 }
 
-void APacManGameMode::SpawnEnemies()
+void APacManGameMode::SpawnEnemies(const FLevelParamsStruct& InitParams)
 {
 	FActorSpawnParameters ActorSpawnParams;
 	ActorSpawnParams.bNoFail = true;
 	ActorSpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	
+
+	int i = 0;
+
 	for (auto enemyType : TEnumRange<EEnemyType>())
 	{
 		//EEnemyType enemyType = EEnemyType::Blinky;
-		TObjectPtr<APacManEnemyAIController> EnemyController = GetWorld()->SpawnActor<APacManEnemyAIController>();
-		EnemyController->SetEnemyType(enemyType);
+		if(i==0)
+			SpawnEnemy(enemyType, InitParams);
+		else
+		{
+			FTimerHandle UnusedHandle;
+			FTimerDelegate TimerDel;
+			TimerDel.BindUFunction(this, FName("SpawnEnemy"), enemyType, InitParams);
+			GetWorldTimerManager().SetTimer(UnusedHandle, TimerDel, i, false);
+		}
 
-		TObjectPtr<AEnemyGridPawn> EnemyPawn = GetWorld()->SpawnActor<AEnemyGridPawn>(EnemyPawnClass, EnemiesData->GetEnemyInitialCell(enemyType), FRotator::ZeroRotator);
-		EnemyPawn->InitMaterial(EnemiesData->GetEnemyMaterialColor(enemyType));
-
-		EnemyController->Possess(EnemyPawn);
-
+		i++;
 	}
 
 }
+
+void APacManGameMode::SpawnEnemy(EEnemyType EnemyType, const FLevelParamsStruct& InitParams)
+{
+	TObjectPtr<APacManEnemyAIController> EnemyController = GetWorld()->SpawnActor<APacManEnemyAIController>();
+	EnemyController->SetEnemyType(EnemyType);
+
+	TObjectPtr<AEnemyGridPawn> EnemyPawn = GetWorld()->SpawnActor<AEnemyGridPawn>(EnemyPawnClass, EnemiesData->GetEnemyInitialCell(EnemyType), FRotator::ZeroRotator);
+
+
+	if (TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>())
+	{
+		EnemyPawn->InitVelocities(GI->GetMaxGridSpeed() * InitParams.EnemySpeedPerc,
+			GI->GetMaxGridSpeed() * InitParams.EnemyFrightenedSpeedPerc);
+
+	}
+
+	EnemyPawn->InitMaterial(EnemiesData->GetEnemyMaterialColor(EnemyType));
+
+	EnemyController->Possess(EnemyPawn);
+}
+
 
 void APacManGameMode::UpdateNCheckLevelCompleted()
 {
