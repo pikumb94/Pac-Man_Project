@@ -23,8 +23,6 @@ void UPacManGameInstance::AddScore(int scoreToAdd, bool isScoreIncremental)
 		scoreToAdd = FMath::Pow(2.f, IncrementalValue) * (scoreToAdd);
 		IncrementalValue++;
 
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, FString::Printf(TEXT("Aggiunti: %d punti"), scoreToAdd));
-
 	}
 
 	score += scoreToAdd;

@@ -3,7 +3,6 @@
 #include "GridPawn.h"
 #include "GameFramework/FloatingPawnMovement.h"
 #include "Components/StaticMeshComponent.h"
-#include "DrawDebugHelpers.h"
 #include "GridUtilities.h"
 
 // Sets default values
@@ -28,8 +27,6 @@ AGridPawn::AGridPawn()
 void AGridPawn::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//LastInputGridPosition = FVector::random;
 }
 
 // Called every frame
@@ -37,9 +34,6 @@ void AGridPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MovementComponent->AddInputVector(CurrentDirection);
-
-	//In a more light version we can use this but raycast should be used to replace normal collision detection
-	//SetActorLocation(GetActorLocation() + CurrentDirection * GridVelocity * DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -63,9 +57,6 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 	//To check this we do a simple raycast of the size of the pawn
 
 	FHitResult Hit;
-	//
-	//FVector TraceStart = GetActorLocation()+ NewDirection *150.f+ NewDirection.RotateAngleAxis(90.f,FVector::UpVector)*60.f;
-	//FVector TraceEnd = GetActorLocation() + NewDirection * 150.f + NewDirection.RotateAngleAxis(-90.f, FVector::UpVector)*60.f;
 
 	FVector TraceStart = GetActorLocation();
 	FVector TraceEnd = GetActorLocation() + NewDirection * (GridConstants::GridSize * 0.75f);
@@ -80,7 +71,7 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 	if (Hit.bBlockingHit && IsValid(Hit.GetActor()))
 	{
 		UE_LOG(LogTemp, Log, TEXT("Trace hit actor: %s"), *Hit.GetActor()->GetName());
-		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 5.f, 0, 10.0f);
+		//DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Red, false, 5.f, 0, 10.0f);
 	}
 	else {
 		UE_LOG(LogTemp, Log, TEXT("No Actors were hit"));
@@ -96,7 +87,8 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 			LastInputGridPosition = FVector::ZeroVector;
 
 		}
-		
+
+		//When cornering disallow its undo by pressing the previous direction
 		if (isCornering && isValidInputCorner) {
 
 			return;
@@ -114,8 +106,6 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 		//Update the new current Direction
 		CurrentDirection = NewDirection;
 	}
-
-
 
 }
 

@@ -38,10 +38,20 @@ void APacManController::BeginPlay()
 void APacManController::MovePlayer(const FInputActionInstance& InputInstance)
 {
     FVector2D AxisInput2D = InputInstance.GetValue().Get<FVector2D>();
+
+    // When input is diagonal, take the last one
+    if (AxisInput2D.SizeSquared() <= 1){
+        LastPlayerInput = AxisInput2D;
+    }
+    else{
+        AxisInput2D -= LastPlayerInput;
+    }
+
     if (auto PacManPawn = Cast<AGridPawn>(GetPawn())) {
         AxisInput2D.Y *= -1.0;
         PacManPawn->SetDirection(FVector(AxisInput2D,0));
     }
+
 }
 
 void APacManController::UpdatePlayerBasedOnEnemyState(EEnemyState NewState)

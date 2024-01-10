@@ -15,6 +15,7 @@ enum class EEnemyType : uint8 {
 };
 ENUM_RANGE_BY_FIRST_AND_LAST(EEnemyType, EEnemyType::Blinky, EEnemyType::Clyde);
 
+
 USTRUCT()
 struct FEnemyInfo {
 	GENERATED_BODY()
@@ -40,7 +41,7 @@ struct FEnemyInfo {
 
 
 /**
- * The data for the different enemy types
+ * The data map for the different enemy types
  */
 
 UCLASS()

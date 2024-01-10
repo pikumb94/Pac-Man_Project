@@ -15,6 +15,8 @@ class PAC_MAN_PROJECT_API APacManController : public APlayerController
 {
 	GENERATED_BODY()
 
+    FVector2D LastPlayerInput = FVector2D::ZeroVector;
+
 protected:
     void SetupInputComponent() override;
     

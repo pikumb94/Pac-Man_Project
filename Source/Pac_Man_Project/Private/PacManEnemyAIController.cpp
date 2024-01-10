@@ -98,6 +98,7 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 			ControlledGridPawn->SetOpacityMaterial(0.f);
 			TargetCell = EnemyInfo->InitialCell;
 			ControlledGridPawn->ResetGridVelocity();
+			ControlledGridPawn->SetGridVelocity(ControlledGridPawn->GetGridVelocity() * 2);
 			break;
 
 		}
@@ -150,7 +151,7 @@ FVector APacManEnemyAIController::DecideNextDirection(bool isChangingState)
 
 		FVector TraceEnd = CurrentCell + versor * GridConstants::GridSize;
 		GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_WorldDynamic, QueryParams);
-		DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Magenta);
+		//DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Magenta);
 
 		//We negate the logic of hit 
 		AvailableDirections.Add(!Hit.bBlockingHit);
@@ -310,10 +311,6 @@ void APacManEnemyAIController::AsyncPhysicsTickActor(float DeltaTime, float SimT
 		bool hasReachedNextCell = hasReachedTargetGridLocation(CurrentLocation, NextCell);
 		bool hasSkippedNextCell = (CurrentCell - NextCell).Size() > GridConstants::GridSize;
 		bool isStuck = ControlledGridPawn->GetVelocity().SizeSquared2D() <= 0.f;
-
-		if(isStuck)
-			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, FString::Printf(TEXT("IS Stuck!")));
-
 
 		if (hasReachedNextCell ||		//The new cell is recomputed if we reach the next cell
 			hasSkippedNextCell)			//Error recovery: enemy is moving far from next cell

@@ -8,7 +8,7 @@
 
 /**
  * Is a pickable actor that assigns the score to the player when
- * he/she overlaps with it
+ * he/she overlaps with it. The score pellet of PacMan
  */
 
 UCLASS()
@@ -21,6 +21,7 @@ class PAC_MAN_PROJECT_API APickableScore : public APickableActor
 	int scoreBaseValue = 10;
 
 protected:
+
 	//Overriden picked action
 	virtual void OnPickedAction(AActor* Other) override;
 };

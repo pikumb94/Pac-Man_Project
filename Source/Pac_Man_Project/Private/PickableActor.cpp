@@ -12,7 +12,6 @@ APickableActor::APickableActor()
 	PrimaryActorTick.bCanEverTick = false;
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	//The Collider for this actor will be a simplified box collision rounding the mesh
 	MeshComponent->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	MeshComponent->OnComponentBeginOverlap.AddDynamic(this, &APickableActor::OnBeginOverlap);
 

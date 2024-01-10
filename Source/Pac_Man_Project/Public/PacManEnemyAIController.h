@@ -30,7 +30,6 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 	
 	// The current grid cell the enemy is
 	FVector CurrentCell = FVector::ZeroVector;
-
 	// The cell of the grid the enemy will try to reach
 	FVector TargetCell = FVector::ZeroVector;
 
@@ -42,7 +41,6 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 	TObjectPtr<class AEnemyGridPawn> ControlledGridPawn;
 
 	FVector DecideNextDirection(bool isChangingState=false);
-
 	FVector ApplyEnemyTypeDecision(const TArray<bool>& AvailableDirectionsArray);
 
 	FVector NextCell = FVector::ZeroVector;
@@ -50,7 +48,6 @@ class PAC_MAN_PROJECT_API APacManEnemyAIController : public AController
 	//Next cell decision policies: are simply or the closest to the target cell or random
 	FVector ClosestToTargetCellPolicy(const TArray<bool>& AvailableDirectionsArray);
 	FVector RandomChoicePolicy(const TArray<bool>& AvailableDirectionsArray);
-	
 	void UpdateChaseTargetCell();
 
 	//Score value of the eaten ghost
@@ -69,8 +66,6 @@ public:
 
 	// Called every physics step
 	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
-
-	
 	
 	void SetEnemyType(EEnemyType NewType) { EnemyType = NewType; };
 

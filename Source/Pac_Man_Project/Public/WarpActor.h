@@ -24,8 +24,6 @@ public:
 	// Sets default values for this actor's properties
 	AWarpActor();
 
-public:	
-
 	//The target destination where PacMan will be teleported
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<AWarpActor> WarpActorDestination = nullptr;

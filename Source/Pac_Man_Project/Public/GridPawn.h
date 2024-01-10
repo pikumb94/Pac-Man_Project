@@ -67,7 +67,6 @@ public:
 	float GetGridVelocity();
 	UFUNCTION(BlueprintCallable)
 	void ResetGridVelocity();
-
 	UFUNCTION(BlueprintCallable)
 	void SetToAlteredVelocity();
 };

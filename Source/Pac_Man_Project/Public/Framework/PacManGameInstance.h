@@ -86,7 +86,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ResetGameInstance() { score = 0; lives = 2; level = 1; ResetIncrementalValue(); };
-
 	UFUNCTION(BlueprintCallable)
 	void ResetIncrementalValue() { IncrementalValue = 0; };
 
@@ -97,10 +96,8 @@ public:
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnScoreChanged OnScoreChanged;
-
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnLivesChanged OnLivesChanged;
-
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnGameOver OnGameOver;
 };

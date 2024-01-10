@@ -33,7 +33,6 @@ void APacManGameMode::FlipFlopScatterChase()
 		GetWorldTimerManager().ClearTimer(ScatterNChaseTimerHandle);
 
 		GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [&]() {FlipFlopScatterChase();}, ChaseModeDuration, false);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, FString::Printf(TEXT("CHASE")));
 		OnChangeState.Broadcast(EEnemyState::Chase);
 
 	}
@@ -41,8 +40,6 @@ void APacManGameMode::FlipFlopScatterChase()
 		GetWorldTimerManager().ClearTimer(ScatterNChaseTimerHandle);
 
 		GetWorldTimerManager().SetTimer(ScatterNChaseTimerHandle, [&]() {FlipFlopScatterChase();}, ScatterModeDuration, false);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, FString::Printf(TEXT("SCATTER")));
-
 		OnChangeState.Broadcast(EEnemyState::Scatter);
 	}
 }
