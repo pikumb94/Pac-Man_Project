@@ -121,12 +121,7 @@ void AGridPawn::SetDirection(const FVector NewDirection)
 
 void AGridPawn::ForceDirection(const FVector NewDirection)
 {
-	if (FVector::DotProduct(CurrentDirection, NewDirection) == 0.f)
-		SetActorLocation(VectorGridSnap(GetActorLocation()));
-
 	CurrentDirection = NewDirection;
-
-
 }
 
 void AGridPawn::SetGridVelocity(float NewMaxGridVelocity)

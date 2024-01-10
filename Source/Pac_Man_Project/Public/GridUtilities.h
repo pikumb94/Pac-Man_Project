@@ -5,6 +5,7 @@
 namespace GridConstants
 {
 	const float GridSize = 100.f;
+	const float PixelSize = 12.5f; //In one cell/GridSize 8 pixels
 
 	// The reference system is Y-down
 	const TArray<FVector, TFixedAllocator<4>> GridVersorsArray{
@@ -36,4 +37,9 @@ inline FVector VectorGridSnap(const FVector& Point, float CustomGridSize = 0.f)
 	
 	return SnappedVector;
 	
+}
+
+inline bool hasReachedTargetGridLocation(const FVector& Vector, const FVector& TargetGridLocation)
+{
+	return (Vector - TargetGridLocation).SizeSquared2D() < GridConstants::PixelSize* GridConstants::PixelSize;
 }

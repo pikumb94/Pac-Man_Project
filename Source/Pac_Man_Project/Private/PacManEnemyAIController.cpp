@@ -9,20 +9,22 @@
 #include "Framework/PacManGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
-#pragma optimize("", off)
-
 
 APacManEnemyAIController::APacManEnemyAIController()
 {
-
+	PrimaryActorTick.bCanEverTick = false;
+	bAsyncPhysicsTickEnabled = true;
 }
 
 
 void APacManEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
+}
 
-
+void APacManEnemyAIController::OnUnPossess()
+{
+	ControlledGridPawn = nullptr;
 }
 
 void APacManEnemyAIController::OnPossess(APawn* InPawn)
@@ -36,20 +38,20 @@ void APacManEnemyAIController::OnPossess(APawn* InPawn)
 
 	ControlledGridPawn = Cast<AEnemyGridPawn>(InPawn);
 
-	State = EEnemyState::Scatter;
-	ChangeEnemyState(State);
-
+	//Invalid State: to force transition state updates
+	State = StaticCast<EEnemyState>(-1);
+	ChangeEnemyState(EEnemyState::Scatter);
+	
 	CurrentCell = VectorGridSnap(ControlledGridPawn->GetActorLocation());
 	FVector NextDirection = DecideNextDirection();
 	ControlledGridPawn->ForceDirection(NextDirection);
 
 	NextCell = CurrentCell + NextDirection * GridConstants::GridSize;
+	
 }
 
 void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 {
-	//TObjectPtr<APacManGameMode> GM = Cast<APacManGameMode>(GetWorld()->GetAuthGameMode());
-	//auto EnemyData = GM->GetEnemiesData();
 
 
 	//If we are not in Idle, the usual logic applies so set the state and variables accordingly
@@ -70,6 +72,7 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 			ControlledGridPawn->ResetGridVelocity();
 
 			//Force Inverse Direction and an invalid next cell to force correct NextCell computation
+			ControlledGridPawn->SetActorLocation(VectorGridSnap(ControlledGridPawn->GetActorLocation()));
 			ControlledGridPawn->ForceDirection(-ControlledGridPawn->GetMovingDirection());
 			NextCell = FVector::ZeroVector;
 			//
@@ -83,6 +86,7 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 				ControlledGridPawn->SetToAlteredVelocity();
 
 			//Force Inverse Direction and an invalid next cell to force correct NextCell computation
+			ControlledGridPawn->SetActorLocation(VectorGridSnap(ControlledGridPawn->GetActorLocation()));
 			ControlledGridPawn->ForceDirection(-ControlledGridPawn->GetMovingDirection());
 			NextCell = FVector::ZeroVector;
 			//
@@ -98,12 +102,10 @@ void APacManEnemyAIController::ChangeEnemyState(EEnemyState NewState)
 
 		}
 
-
 		//Lastly update the state
 		State = NewState;
 
 	}
-
 
 }
 
@@ -116,14 +118,7 @@ void APacManEnemyAIController::PawnOverlappedPlayerHandler()
 
 		if (State == EEnemyState::Frightened) {
 
-			//Teleport and set to scatter
-			//TODO: use Idle to move to initial cell rather than teleport
-			/*
-			GetWorldTimerManager().SetTimerForNextTick([GM,this]() {
-				ControlledGridPawn->SetActorLocation(EnemyInfo->InitialCell);
-				ChangeEnemyState(EEnemyState::Scatter);
-			});
-			*/
+			//We set the Idle state to make the enemy return to the ghost house
 			ChangeEnemyState(EEnemyState::Idle);
 
 			TObjectPtr<UPacManGameInstance> GI = GetWorld()->GetGameInstance<UPacManGameInstance>();
@@ -168,29 +163,7 @@ FVector APacManEnemyAIController::DecideNextDirection(bool isChangingState)
 		if (GridConstants::GridVersorsArray.Find(-ControlledGridPawn->GetMovingDirection(), indexToExclude))
 			AvailableDirections[indexToExclude] = false;
 	}
-	/*
-	//Find next direction among free cell by choosing the closest one
-	float minDstSqrd = TNumericLimits<float>::Max();
-	int minIdx = -1;
 
-	for (int i = 0; i < AvailableDirections.Num(); i++)
-	{
-		if (!AvailableDirections[i])
-			continue;
-
-		FVector TmpNextCell = CurrentCell + GridConstants::GridVersorsArray[i] * GridConstants::GridSize;
-
-		float dstSqrd = FMath::Pow(TmpNextCell.X - TargetCell.X, 2) + FMath::Pow(TmpNextCell.Y - TargetCell.Y, 2);
-
-		if (dstSqrd < minDstSqrd) {
-			minIdx = i;
-			minDstSqrd = dstSqrd;
-		}
-	}
-
-
-	return (minIdx>-1? GridConstants::GridVersorsArray[minIdx] : ControlledGridPawn->GetMovingDirection());
-	*/
 	return ApplyEnemyTypeDecision(AvailableDirections);
 }
 
@@ -244,6 +217,7 @@ void APacManEnemyAIController::UpdateChaseTargetCell()
 			FVector IntermediateCell = VectorGridSnap(PlayerPawn->GetActorLocation() + PlayerPawn->GetMovingDirection() * 2 * GridConstants::GridSize);
 
 			TArray<AActor*> outEnemyPCs;
+			//TODO: find a more performant way to get Blinky
 			UGameplayStatics::GetAllActorsOfClass(GetWorld(), APacManEnemyAIController::StaticClass(), outEnemyPCs);
 
 			AActor** pBlinkyPC = outEnemyPCs.FindByPredicate([](const AActor* Element) {
@@ -280,7 +254,6 @@ void APacManEnemyAIController::UpdateChaseTargetCell()
 	}
 
 }
-
 
 FVector APacManEnemyAIController::RandomChoicePolicy(const TArray<bool>& AvailableDirectionsArray)
 {
@@ -320,54 +293,45 @@ FVector APacManEnemyAIController::ClosestToTargetCellPolicy(const TArray<bool>& 
 		}
 	}
 
-
 	return (minIdx > -1 ? GridConstants::GridVersorsArray[minIdx] : ControlledGridPawn->GetMovingDirection());
 
 }
 
 
-void APacManEnemyAIController::Tick(float DeltaTime)
+void APacManEnemyAIController::AsyncPhysicsTickActor(float DeltaTime, float SimTime)
 {
-	Super::Tick(DeltaTime);
+	Super::AsyncPhysicsTickActor(DeltaTime, SimTime);
 
-	CurrentCell = VectorGridSnap(ControlledGridPawn->GetActorLocation());
-	FVector CurrentLocation = ControlledGridPawn->GetActorLocation();
-
-	bool hasReachedNextCell = (CurrentLocation - NextCell).Size() < 12.5f;
-	bool hasSkippedNextCell = (CurrentCell - NextCell).Size() > GridConstants::GridSize;
-	bool isStuck = ControlledGridPawn->GetVelocity().SizeSquared2D() <= 0.f;
-
-	/*
-	if (hasReachedNextCell)
-		DrawDebugCircle(GetWorld(), ControlledGridPawn->GetActorLocation(), 25, 25,
-			FColor::Green, false, 2, 0, 0, FVector::RightVector, FVector::ForwardVector);*/
-	if (hasSkippedNextCell)
-		DrawDebugCircle(GetWorld(), NextCell, 25, 25,
-			FColor::Purple, false, 2, 0, 0, FVector::RightVector, FVector::ForwardVector);
-	/*if (isStuck)
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, FString::Printf(TEXT("SONO STUCK!")));
-	*/
-
-	if (hasReachedNextCell ||		//The new cell is recomputed if we reach the next cell
-		hasSkippedNextCell)// ||	//Error recovery: enemy is moving far from next cell
-		//isStuck) 					//Error recovery: enemy is stuck
+	if (ControlledGridPawn)
 	{
-		FVector NextDirection = DecideNextDirection();
-		ControlledGridPawn->ForceDirection(NextDirection);
+		CurrentCell = VectorGridSnap(ControlledGridPawn->GetActorLocation());
+		FVector CurrentLocation = ControlledGridPawn->GetActorLocation();
 
-		NextCell = CurrentCell + NextDirection * GridConstants::GridSize;
+		bool hasReachedNextCell = hasReachedTargetGridLocation(CurrentLocation, NextCell);
+		bool hasSkippedNextCell = (CurrentCell - NextCell).Size() > GridConstants::GridSize;
+		bool isStuck = ControlledGridPawn->GetVelocity().SizeSquared2D() <= 0.f;
 
+		if(isStuck)
+			GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Orange, FString::Printf(TEXT("IS Stuck!")));
+
+
+		if (hasReachedNextCell ||		//The new cell is recomputed if we reach the next cell
+			hasSkippedNextCell)			//Error recovery: enemy is moving far from next cell
+		{
+			FVector NextDirection = DecideNextDirection();
+
+			ControlledGridPawn->ForceDirection(NextDirection);
+
+			NextCell = CurrentCell + NextDirection * GridConstants::GridSize;
+
+		}
+
+		//This is the only way to exit Idle State
+		if (State == EEnemyState::Idle && hasReachedTargetGridLocation(CurrentLocation, TargetCell))
+		{
+			State = EEnemyState::Scatter;
+			ChangeEnemyState(State);
+		}
 	}
 
-	if (State == EEnemyState::Idle && ((CurrentLocation - TargetCell).Size() < 12.5f || NextCell == TargetCell))
-	{
-		State = EEnemyState::Scatter;
-		ChangeEnemyState(State);
-	}
-
-	DrawDebugCircle(GetWorld(), TargetCell, 25, 25, EnemyInfo->EnemyColor,false, 1, 0, 0, FVector::RightVector, FVector::ForwardVector);
-
-	DrawDebugLine(GetWorld(), ControlledGridPawn->GetActorLocation(), ControlledGridPawn->GetActorLocation()+ControlledGridPawn->GetMovingDirection()*100, FColor::Green);
 }
-
-#pragma optimize("", on)

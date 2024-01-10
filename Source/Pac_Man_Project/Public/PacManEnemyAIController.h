@@ -62,13 +62,15 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void OnPossess(APawn* InPawn) override;
+	virtual void OnUnPossess() override;
 
 public:
 	APacManEnemyAIController();
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	// Called every physics step
+	virtual void AsyncPhysicsTickActor(float DeltaTime, float SimTime) override;
 
+	
 	
 	void SetEnemyType(EEnemyType NewType) { EnemyType = NewType; };
 
